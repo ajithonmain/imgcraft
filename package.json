@@ -4,6 +4,7 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "build": "pnpm -r build",
+    "build:server": "pnpm --filter imgcraft build && pnpm --filter @imgcraft/server build",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint 'packages/*/src/**/*.ts'"
