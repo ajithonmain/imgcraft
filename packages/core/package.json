@@ -39,5 +39,13 @@
     "sharp": {
       "optional": true
     }
+  },
+  "dependencies": {
+    "@imgly/background-removal": "^1.7.0",
+    "@tensorflow-models/coco-ssd": "^2.2.3",
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "@upscalerjs/esrgan-slim": "^1.0.0",
+    "p-queue": "^9.3.0",
+    "upscalerjs": "^1.0.0"
   }
 }

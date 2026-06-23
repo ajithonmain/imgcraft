@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: imgcraft-server
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: INTERNAL_SECRET
+        generateValue: true
+      - key: PORT
+        value: 3001

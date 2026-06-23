@@ -26,13 +26,15 @@ import type {
   TintOptions,
   CompositeOptions,
   ContrastOptions,
+  SmartCropOptions,
+  UpscaleOptions,
 } from './types.js'
 
 export class Pipeline {
   private readonly _state: PipelineState
 
-  constructor(input: ImageInput) {
-    this._state = { input, ops: [] }
+  constructor(input: ImageInput, ops: PipelineOp[] = []) {
+    this._state = { input, ops: [...ops] }
   }
 
   private push(op: PipelineOp): this {
@@ -134,6 +136,18 @@ export class Pipeline {
 
   stripMeta(): this {
     return this.push({ op: 'stripMeta' })
+  }
+
+  removeBackground(): this {
+    return this.push({ op: 'removeBackground' })
+  }
+
+  smartCrop(options?: SmartCropOptions): this {
+    return this.push({ op: 'smartCrop', options: options ?? {} })
+  }
+
+  upscale(options: UpscaleOptions): this {
+    return this.push({ op: 'upscale', options })
   }
 
   async meta(): Promise<MetadataResult> {

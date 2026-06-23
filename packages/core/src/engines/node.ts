@@ -7,6 +7,11 @@ import type {
   ImageInput,
   PipelineOp,
 } from '../types.js'
+import {
+  applyRemoveBackground,
+  applySmartCrop,
+  applyUpscale,
+} from '../transforms/ai.js'
 
 type SharpConstructor = Awaited<ReturnType<typeof importSharp>>
 type SharpInstance = ReturnType<SharpConstructor>
@@ -113,6 +118,10 @@ function applyOp(pipeline: SharpInstance, op: PipelineOp): SharpInstance {
 
     case 'format':
     case 'quality':
+    case 'removeBackground':
+    case 'smartCrop':
+    case 'upscale':
+      // AI ops and format/quality are handled in processNode before reaching here
       return pipeline
   }
 }
@@ -121,18 +130,34 @@ export async function processNode(state: PipelineState): Promise<EngineResult> {
   const sharp = await importSharp()
 
   let pipeline = sharp(toSharpInput(state.input))
-
   let pendingFormat: string | undefined
   let pendingQuality: number | undefined
 
   for (const op of state.ops) {
     if (op.op === 'format') {
       pendingFormat = op.options.format
-      if (op.options.quality !== undefined) {
-        pendingQuality = op.options.quality
-      }
+      if (op.options.quality !== undefined) pendingQuality = op.options.quality
     } else if (op.op === 'quality') {
       pendingQuality = op.value
+    } else if (
+      op.op === 'removeBackground' ||
+      op.op === 'smartCrop' ||
+      op.op === 'upscale'
+    ) {
+      // Flush current pipeline to PNG (lossless) before AI transform
+      const flushed = await pipeline.png().toBuffer()
+
+      let result: Buffer
+      if (op.op === 'removeBackground') {
+        result = await applyRemoveBackground(flushed)
+      } else if (op.op === 'smartCrop') {
+        result = await applySmartCrop(flushed, op.options)
+      } else {
+        result = await applyUpscale(flushed, op.options)
+      }
+
+      // Restart pipeline from AI output; pending format/quality still apply at end
+      pipeline = sharp(result)
     } else {
       pipeline = applyOp(pipeline, op)
     }

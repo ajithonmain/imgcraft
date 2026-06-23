@@ -1,11 +1,25 @@
+import { Hono } from 'hono'
+import { cors } from './middleware/cors.js'
+import { rateLimit } from './middleware/ratelimit.js'
+import { health } from './routes/health.js'
+import { info } from './routes/info.js'
+import { transform } from './routes/transform.js'
+
 export interface Env {
   RATE_LIMIT_RPM: string
   ALLOWED_ORIGINS: string
   RATE_LIMIT_KV: KVNamespace
+  SERVER_URL: string
+  INTERNAL_SECRET: string
 }
 
-export default {
-  async fetch(_request: Request, _env: Env): Promise<Response> {
-    return new Response('imgcraft API — scaffold only', { status: 200 })
-  },
-} satisfies ExportedHandler<Env>
+const app = new Hono<{ Bindings: Env }>()
+
+app.use('*', cors)
+app.use('*', rateLimit)
+
+app.route('/health', health)
+app.route('/info', info)
+app.route('/transform', transform)
+
+export default app

@@ -95,6 +95,15 @@ export interface CompositeOptions {
   gravity?: Gravity
 }
 
+export interface SmartCropOptions {
+  padding?: number
+  subject?: string
+}
+
+export interface UpscaleOptions {
+  factor: 2 | 4
+}
+
 export interface MetadataResult {
   width?: number
   height?: number
@@ -133,6 +142,9 @@ export type PipelineOp =
   | { op: 'contrast'; options: ContrastOptions }
   | { op: 'composite'; options: CompositeOptions }
   | { op: 'stripMeta' }
+  | { op: 'removeBackground' }
+  | { op: 'smartCrop'; options: SmartCropOptions }
+  | { op: 'upscale'; options: UpscaleOptions }
 
 export interface PipelineState {
   input: ImageInput

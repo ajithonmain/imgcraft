@@ -176,6 +176,9 @@ export async function processWasm(state: PipelineState): Promise<EngineResult> {
         case 'saturation':
         case 'composite':
         case 'stripMeta':
+        case 'removeBackground':
+        case 'smartCrop':
+        case 'upscale':
           warnUnsupported(op.op)
           break
 

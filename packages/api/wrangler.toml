@@ -1,14 +1,16 @@
 name = "imgcraft-api"
 main = "src/index.ts"
-compatibility_date = "2024-09-23"
+compatibility_date = "2025-01-01"
 
 [vars]
 RATE_LIMIT_RPM = "60"
 ALLOWED_ORIGINS = "*"
+SERVER_URL = "https://imgcraft-server.onrender.com"
+# INTERNAL_SECRET is a secret — set via: wrangler secret put INTERNAL_SECRET
 
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
-id = "PLACEHOLDER_KV_ID"
+id = "18770718bfc1404f8bfb597c2cf4b04e"
 
 # [[r2_buckets]]
 # binding = "R2"

@@ -12,5 +12,10 @@
     "@cloudflare/workers-types": "^4.20240000.0",
     "typescript": "^5.5.0",
     "wrangler": "^3.0.0"
+  },
+  "dependencies": {
+    "imgcraft": "workspace:*",
+    "hono": "^4.12.27",
+    "zod": "^4.4.3"
   }
 }
