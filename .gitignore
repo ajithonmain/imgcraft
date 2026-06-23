@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+.next/
+out/
+
+# TypeScript
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Wrangler (Cloudflare Workers)
+.wrangler/
+.dev.vars
+
+# Vitest
+coverage/
+
+# Claude Code / AI dev context
+.claude/
+CLAUDE.md
+AGENTS.md
+SPEC.md
+STATUS.md
