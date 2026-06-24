@@ -6,14 +6,14 @@
   <a href="https://www.npmjs.com/package/imgcraft"><img src="https://img.shields.io/npm/v/imgcraft.svg" alt="npm version"></a>
   <a href="https://www.npmjs.com/package/imgcraft"><img src="https://img.shields.io/npm/dm/imgcraft.svg" alt="downloads"></a>
   <a href="https://github.com/ajithonmain/imgcraft/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/imgcraft.svg" alt="license"></a>
-  <a href="https://github.com/ajithonmain/imgcraft/actions"><img src="https://img.shields.io/badge/tests-65%20passing-brightgreen.svg" alt="tests"></a>
+  <a href="https://github.com/ajithonmain/imgcraft/actions"><img src="https://img.shields.io/badge/tests-70%20passing-brightgreen.svg" alt="tests"></a>
 </p>
 
 ---
 
 Chainable image processing for Node.js and the browser — with AI ops built in.
 
-imgcraft converts images between formats, resizes, crops, removes backgrounds, upscales, and more — via a fluent chainable API. It runs natively in Node.js using sharp, and in the browser via WebAssembly. A hosted REST API is also available at `https://imgcraft-api.imgcraft.workers.dev`.
+imgcraft converts, compresses, resizes, crops, removes backgrounds, upscales images and more — via a fluent chainable API. Runs natively in Node.js using sharp, and in the browser via WebAssembly. A hosted REST API is also available at `https://imgcraft-api.imgcraft.workers.dev`.
 
 ## Installation
 
@@ -25,6 +25,16 @@ npm install imgcraft
 
 ```ts
 import { img, batch } from 'imgcraft'
+
+// Compress — 3.5MB JPEG → 60KB WebP in one line
+const buffer = await img('photo.jpg')
+  .compress({ quality: 85 })
+  .toBuffer()
+
+// Bulk compress an entire folder
+await batch(['hero.jpg', 'banner.jpg', 'thumb.jpg'])
+  .compress({ quality: 80 })
+  .toDir('./optimized')
 
 // Resize and convert
 const buffer = await img('photo.jpg')
@@ -44,19 +54,19 @@ const buffer = await img('input.png')
   .sharpen()
   .removeBackground()
   .upscale(2)
-  .webp({ quality: 90 })
+  .compress({ format: 'avif', quality: 60 })
   .toBuffer()
 
 // Batch process with concurrency control
 await batch(['a.jpg', 'b.jpg', 'c.jpg'], { concurrency: 4 })
   .resize(800)
-  .webp()
+  .compress()
   .toDir('./output')
 
 // Browser (WASM — same API)
 const result = await img(file)
   .resize(400)
-  .grayscale()
+  .compress({ quality: 80 })
   .toDataURL()
 
 // Read metadata
@@ -67,8 +77,8 @@ const meta = await img('photo.jpg').meta()
 const form = new FormData()
 form.append('image', file)
 form.append('ops', JSON.stringify([
-  { op: 'resize', width: 800 },
-  { op: 'format', format: 'webp', quality: 85 }
+  { op: 'resize', options: { width: 800 } },
+  { op: 'compress', options: { quality: 85 } }
 ]))
 const res = await fetch('https://imgcraft-api.imgcraft.workers.dev/transform', {
   method: 'POST', body: form
@@ -77,6 +87,9 @@ const blob = await res.blob()
 ```
 
 ## Supported operations
+
+**Compression**
+- `compress(options?)` — compress to WebP/AVIF/JPEG/PNG with quality control (default: WebP q80)
 
 **Transforms**
 - `resize(width?, height?, options?)` — fit modes: cover, contain, fill, inside, outside
@@ -132,22 +145,31 @@ const blob = await res.blob()
 
 ## REST API
 
-```
-POST  https://imgcraft-api.imgcraft.workers.dev/transform   # process image
-POST  https://imgcraft-api.imgcraft.workers.dev/info        # read metadata
-GET   https://imgcraft-api.imgcraft.workers.dev/health      # status
+A hosted Cloudflare Worker proxies requests to the Node.js processing server. No SDK required.
+
+**Base URL:** `https://imgcraft-api.imgcraft.workers.dev`
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/transform` | Process an image, returns transformed bytes |
+| `GET` | `/info` | Read metadata without processing |
+| `GET` | `/health` | Status check |
+
+**Rate limits:** 10 req/min · 50 req/day · 10 AI ops/day (per IP)
+
+```sh
+curl -X POST https://imgcraft-api.imgcraft.workers.dev/transform \
+  -F "image=@photo.jpg" \
+  -F 'ops=[{"op":"compress","options":{"quality":85}}]' \
+  --output result.webp
 ```
 
-Rate limited to 60 requests per minute per IP. AI operations not available via REST API.
+Full REST API reference: [imgcraft-docs.vercel.app/docs/rest-api](https://imgcraft-docs.vercel.app/docs/rest-api)
 
 ## Documentation
 
-Visit **[imgcraft-docs.vercel.app](https://imgcraft-docs.vercel.app)** for complete API documentation, guides, and a live playground.
-
-## Contributing
-
-Issues and pull requests welcome at [github.com/ajithonmain/imgcraft](https://github.com/ajithonmain/imgcraft).
+[imgcraft-docs.vercel.app](https://imgcraft-docs.vercel.app) — getting started, full API reference, live playground.
 
 ## License
 
-MIT © 2026 Ajith M Jose
+MIT
