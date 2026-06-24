@@ -3,7 +3,9 @@ main = "src/index.ts"
 compatibility_date = "2026-01-01"
 
 [vars]
-RATE_LIMIT_RPM = "60"
+RATE_LIMIT_RPM = "10"
+RATE_LIMIT_DAY = "50"
+RATE_LIMIT_AI_DAY = "10"
 ALLOWED_ORIGINS = "*"
 SERVER_URL = "https://imgcraft-server.onrender.com"
 # INTERNAL_SECRET is a secret — set via: wrangler secret put INTERNAL_SECRET
