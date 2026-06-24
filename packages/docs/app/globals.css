@@ -123,6 +123,27 @@ button {
   color: var(--text);
 }
 
+.nav-link-active {
+  color: var(--accent);
+  font-weight: 600;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 2px;
+}
+
+.top-nav-logo-fallback {
+  width: 28px;
+  height: 28px;
+  background: var(--accent);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #000;
+  flex-shrink: 0;
+}
+
 .top-nav-right {
   display: flex;
   align-items: center;
@@ -591,6 +612,8 @@ button {
   margin: 0 auto;
   padding: 5rem 1.5rem 3rem;
   text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .landing-headline {
@@ -670,21 +693,38 @@ button {
 }
 
 .feature-card {
-  padding: 1.25rem;
-  border-radius: 8px;
+  padding: 20px;
+  border-radius: 12px;
   background: var(--bg-surface);
   border: 1px solid var(--border);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.feature-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
 }
 
 .feature-card-title {
   font-weight: 600;
-  font-size: 0.9375rem;
-  margin-bottom: 0.375rem;
+  font-size: 14px;
+  margin-bottom: 4px;
   color: var(--text);
 }
 
 .feature-card-desc {
-  font-size: 0.8125rem;
+  font-size: 13px;
   color: var(--text-muted);
   line-height: 1.5;
 }
@@ -692,20 +732,16 @@ button {
 .stats-bar {
   max-width: 900px;
   margin: 0 auto 3rem;
-  padding: 0 1.5rem;
+  padding: 1.25rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
+  gap: 1.25rem;
   flex-wrap: wrap;
   font-size: 0.8125rem;
   color: var(--text-muted);
-}
-
-.stats-bar-divider {
-  width: 1px;
-  height: 14px;
-  background: var(--border);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .install-section {
@@ -740,6 +776,24 @@ button {
   user-select: none;
 }
 
+.install-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.install-link {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  transition: color 0.15s;
+}
+
+.install-link:hover {
+  color: var(--accent);
+}
+
 @media (max-width: 768px) {
   .feature-grid {
     grid-template-columns: 1fr;
@@ -755,8 +809,9 @@ button {
 }
 
 @media (max-width: 480px) {
-  .stats-bar-divider {
-    display: none;
+  .stats-bar {
+    gap: 0.75rem;
+    font-size: 0.75rem;
   }
 }
 
