@@ -16,7 +16,7 @@
     "shiki": "^1.22.0",
     "@monaco-editor/react": "^4.6.0",
     "@next/mdx": "^15.0.0",
-    "next-mdx-remote": "^5.0.0",
+    "next-mdx-remote": "^6.0.0",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.400.0"
   },
