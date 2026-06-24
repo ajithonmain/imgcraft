@@ -2,9 +2,9 @@
 
 Chainable image transforms for Node + Browser.
 
-[![npm](https://img.shields.io/npm/v/imgcraft)](https://www.npmjs.com/package/imgcraft)
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue)](https://www.typescriptlang.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/imgcraft.svg)](https://www.npmjs.com/package/imgcraft)
+[![license](https://img.shields.io/npm/l/imgcraft.svg)](https://github.com/ajithonmain/imgcraft/blob/main/LICENSE)
+[![tests](https://img.shields.io/badge/tests-65%20passing-brightgreen.svg)](https://github.com/ajithonmain/imgcraft/actions)
 
 ## Install
 
