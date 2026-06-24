@@ -14,7 +14,6 @@ app.route('/info', info)
 app.route('/transform', transform)
 
 app.onError((err, c) => {
-  console.error('[server] unhandled error:', err)
   return c.json({ error: err.message, code: 'INTERNAL_ERROR' }, 500)
 })
 
