@@ -24,16 +24,28 @@ const features = [
     desc: 'Compose transforms like sentences. Readable, typed, predictable.',
   },
   {
+    title: 'Format Convert',
+    desc: 'JPEG, PNG, WebP, AVIF — one method, full per-format options.',
+  },
+  {
     title: 'Batch Ready',
     desc: 'Process thousands of images with concurrency control.',
   },
   {
-    title: 'TypeScript First',
-    desc: 'Strict types throughout. Zero any. Full autocomplete.',
+    title: 'Color & Filters',
+    desc: 'Blur, sharpen, grayscale, tint, brightness, contrast, saturation.',
   },
   {
-    title: 'Hosted API',
-    desc: 'REST endpoint at imgcraft-api.imgcraft.workers.dev. POST an image, get transforms.',
+    title: 'Compositing',
+    desc: 'Overlay images, add watermarks, alpha compositing.',
+  },
+  {
+    title: 'Metadata',
+    desc: 'Read width, height, format, EXIF. Strip metadata in one call.',
+  },
+  {
+    title: 'REST API',
+    desc: 'Hosted at imgcraft-api.imgcraft.workers.dev. POST an image, get transforms.',
   },
 ]
 

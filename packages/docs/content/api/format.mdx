@@ -4,7 +4,13 @@
 
 Convert images between formats with per-format quality and encoding options.
 
-## Format methods
+## Generic method
+
+```typescript
+.format(type: 'jpeg' | 'png' | 'webp' | 'avif', options?: FormatOptions): Pipeline
+```
+
+## Format shorthands
 
 ```typescript
 .jpeg(options?: JpegOptions): Pipeline
@@ -13,43 +19,122 @@ Convert images between formats with per-format quality and encoding options.
 .avif(options?: AvifOptions): Pipeline
 ```
 
-Or use the generic method:
+## quality
 
 ```typescript
-.format(type: 'jpeg' | 'png' | 'webp' | 'avif', options?: FormatOptions): Pipeline
+.quality(value: number): Pipeline
 ```
 
-## JPEG options
+Set output quality (1–100) without specifying a format. Applied to whatever format is active at output time. Use format-specific methods when you need fine-grained control.
 
-| Prop | Type | Default | Description |
+```typescript
+await img('photo.jpg').quality(75).toBuffer()
+```
+
+---
+
+## JPEG
+
+| Option | Type | Default | Description |
 |---|---|---|---|
-| quality | `number` | `80` | Quality 1–100. Lower = smaller file. |
-| progressive | `boolean` | `false` | Enable progressive (interlaced) JPEG. |
-| mozjpeg | `boolean` | `false` | Use MozJPEG encoder for better compression. |
+| `quality` | `number` | `80` | Quality 1–100. Lower = smaller file. |
+| `progressive` | `boolean` | `false` | Progressive (interlaced) JPEG — loads top-to-bottom in browsers. |
+| `mozjpeg` | `boolean` | `false` | Use MozJPEG encoder for better compression at same quality. |
 
-## PNG options
+```typescript
+// Standard quality
+await img('photo.jpg').jpeg({ quality: 85 }).toBuffer()
 
-| Prop | Type | Default | Description |
+// Progressive JPEG for web
+await img('photo.jpg').jpeg({ quality: 80, progressive: true }).toBuffer()
+
+// Maximum compression with MozJPEG
+await img('photo.jpg').jpeg({ quality: 75, mozjpeg: true }).toBuffer()
+```
+
+---
+
+## PNG
+
+| Option | Type | Default | Description |
 |---|---|---|---|
-| quality | `number` | `100` | Quality 1–100 (lossless if 100). |
-| compressionLevel | `number` | `6` | zlib compression level 0–9. |
-| progressive | `boolean` | `false` | Enable interlaced PNG. |
+| `quality` | `number` | `100` | Quality 1–100. Values below 100 enable lossy compression. |
+| `compressionLevel` | `number` | `6` | zlib compression level 0–9. Higher = smaller file, slower. |
+| `progressive` | `boolean` | `false` | Interlaced PNG. |
 
-## WebP options
+```typescript
+// Lossless PNG
+await img('photo.jpg').png().toBuffer()
 
-| Prop | Type | Default | Description |
+// Lossy PNG (smaller file)
+await img('photo.jpg').png({ quality: 80 }).toBuffer()
+
+// Maximum compression
+await img('photo.jpg').png({ compressionLevel: 9 }).toBuffer()
+```
+
+---
+
+## WebP
+
+| Option | Type | Default | Description |
 |---|---|---|---|
-| quality | `number` | `80` | Quality 1–100. |
-| lossless | `boolean` | `false` | Enable lossless WebP. |
-| effort | `number` | `4` | Compression effort 0–6. Higher = smaller, slower. |
+| `quality` | `number` | `80` | Quality 1–100. |
+| `lossless` | `boolean` | `false` | Lossless WebP encoding. |
+| `effort` | `number` | `4` | Compression effort 0–6. Higher = smaller file, slower encode. |
 
-## AVIF options
+```typescript
+// Standard WebP
+await img('photo.jpg').webp({ quality: 85 }).toBuffer()
 
-| Prop | Type | Default | Description |
+// Lossless WebP (good for graphics/screenshots)
+await img('photo.jpg').webp({ lossless: true }).toBuffer()
+
+// Maximum compression
+await img('photo.jpg').webp({ quality: 80, effort: 6 }).toBuffer()
+```
+
+<Callout type="info">
+  WebP typically achieves 25–35% smaller files than JPEG at equivalent visual quality. It's the recommended format for most web use cases.
+</Callout>
+
+---
+
+## AVIF
+
+| Option | Type | Default | Description |
 |---|---|---|---|
-| quality | `number` | `50` | Quality 1–100. |
-| effort | `number` | `4` | Compression effort 0–9. |
-| lossless | `boolean` | `false` | Enable lossless encoding. |
+| `quality` | `number` | `50` | Quality 1–100. AVIF quality scales differently — 50 is visually good. |
+| `effort` | `number` | `4` | Compression effort 0–9. Higher = smaller file, significantly slower. |
+| `lossless` | `boolean` | `false` | Lossless encoding. |
+
+```typescript
+// Standard AVIF
+await img('photo.jpg').avif({ quality: 50 }).toBuffer()
+
+// High quality
+await img('photo.jpg').avif({ quality: 70, effort: 6 }).toBuffer()
+
+// Maximum compression (slow)
+await img('photo.jpg').avif({ quality: 40, effort: 9 }).toBuffer()
+```
+
+<Callout type="info">
+  AVIF achieves 40–50% smaller files than JPEG but encoding is significantly slower than WebP. Use it for static assets where build-time encoding is acceptable.
+</Callout>
+
+---
+
+## Format comparison
+
+| Format | Best for | Typical savings vs JPEG |
+|---|---|---|
+| JPEG | Photos, no transparency | baseline |
+| PNG | Graphics, transparency, lossless | larger |
+| WebP | Web images, photos + graphics | 25–35% smaller |
+| AVIF | Maximum compression, modern browsers | 40–50% smaller |
+
+---
 
 ## Examples
 
@@ -57,16 +142,15 @@ Or use the generic method:
 // Convert to WebP at 85% quality
 await img('photo.jpg').webp({ quality: 85 }).toBuffer()
 
-// Lossless PNG
-await img('photo.jpg').png({ quality: 100 }).toBuffer()
+// Convert PNG to AVIF
+await img('graphic.png').avif({ quality: 60 }).toBuffer()
 
-// High-efficiency AVIF
-await img('photo.jpg').avif({ quality: 50, effort: 6 }).toBuffer()
+// Resize then encode
+await img('photo.jpg')
+  .resize(1200)
+  .webp({ quality: 85, effort: 5 })
+  .toBuffer()
 
 // Generic format method
 await img('photo.jpg').format('webp', { quality: 80 }).toBuffer()
 ```
-
-<Callout type="info">
-  WebP typically achieves 25–35% smaller files than JPEG at equivalent visual quality. AVIF goes further but is slower to encode.
-</Callout>

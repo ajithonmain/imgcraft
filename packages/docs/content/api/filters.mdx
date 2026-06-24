@@ -2,94 +2,153 @@
 
 <Badge variant="node">Node</Badge> <Badge variant="browser">Browser</Badge>
 
-Apply visual adjustments and effects to images.
+Visual adjustments and effects: blur, sharpen, and colour operations.
 
-## Blur
+## blur
 
 ```typescript
 .blur(sigma?: number): Pipeline
 ```
 
-Gaussian blur. `sigma` controls the blur radius (default: mild blur).
+Gaussian blur. `sigma` controls the blur radius — higher values produce stronger blur.
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `sigma` | `number` | mild blur | Standard deviation of the Gaussian kernel (0.3–1000) |
 
 ```typescript
-await img('photo.jpg').blur(3).toBuffer()
+// Mild blur (default)
+await img('photo.jpg').blur().toBuffer()
+
+// Strong blur
+await img('photo.jpg').blur(10).toBuffer()
+
+// Background blur effect
+await img('photo.jpg').blur(20).toBuffer()
 ```
 
-## Sharpen
+---
+
+## sharpen
 
 ```typescript
-.sharpen(sigma?: number, flat?: number, jagged?: number): Pipeline
+.sharpen(options?: SharpenOptions): Pipeline
 ```
 
-Unsharp mask sharpening.
+Unsharp mask sharpening. Recovers detail after resizing.
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `sigma` | `number` | `1` | Gaussian sigma of the sharpening mask |
+| `m1` | `number` | `1` | Flat area sharpening strength |
+| `m2` | `number` | `2` | Jagged area sharpening strength |
 
 ```typescript
-await img('photo.jpg').sharpen().toBuffer()
-await img('photo.jpg').sharpen(1, 1, 2).toBuffer()
+// Default sharpening — good for post-resize cleanup
+await img('photo.jpg').resize(800).sharpen().toBuffer()
+
+// Custom parameters
+await img('photo.jpg').sharpen({ sigma: 1.5, m1: 1, m2: 2 }).toBuffer()
 ```
 
-## Median
+---
+
+## median
 
 ```typescript
 .median(size?: number): Pipeline
 ```
 
-Median filter for noise reduction. `size` is the kernel size (default: 3).
+Median filter for noise reduction. Preserves edges better than Gaussian blur.
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `size` | `number` | `3` | Square kernel size in pixels |
 
 ```typescript
-await img('photo.jpg').median(3).toBuffer()
+// Default — 3x3 kernel
+await img('photo.jpg').median().toBuffer()
+
+// Stronger noise reduction
+await img('photo.jpg').median(5).toBuffer()
 ```
 
-## Grayscale
+---
+
+## grayscale
 
 ```typescript
 .grayscale(): Pipeline
 ```
 
-Convert to grayscale.
+Convert to greyscale using luminance weights.
 
 ```typescript
 await img('photo.jpg').grayscale().toBuffer()
+
+// Greyscale JPEG
+await img('photo.jpg').grayscale().jpeg({ quality: 85 }).toBuffer()
 ```
 
-## Tint
+---
+
+## tint
 
 ```typescript
-.tint(color: string): Pipeline
+.tint(colour: string | { r: number, g: number, b: number }): Pipeline
 ```
 
-Apply a color tint. Accepts hex or CSS color strings.
+Merge the image with a solid colour. The image luminance is preserved.
 
 ```typescript
+// Hex colour
 await img('photo.jpg').tint('#ff6600').toBuffer()
+
+// RGB object
+await img('photo.jpg').tint({ r: 255, g: 102, b: 0 }).toBuffer()
 ```
 
-## Negate
+---
+
+## negate
 
 ```typescript
 .negate(): Pipeline
 ```
 
-Invert pixel values (negative effect).
+Invert pixel values (photographic negative).
 
 ```typescript
 await img('photo.jpg').negate().toBuffer()
 ```
 
-## Brightness
+---
+
+## brightness
 
 ```typescript
 .brightness(factor: number): Pipeline
 ```
 
-Multiply brightness. `1.0` is unchanged, `1.5` is 50% brighter, `0.5` is darker.
+Multiply brightness. `1.0` is unchanged.
+
+| Value | Effect |
+|---|---|
+| `< 1.0` | Darker |
+| `1.0` | No change |
+| `> 1.0` | Brighter |
 
 ```typescript
+// 20% brighter
 await img('photo.jpg').brightness(1.2).toBuffer()
+
+// 30% darker
+await img('photo.jpg').brightness(0.7).toBuffer()
 ```
 
-## Contrast
+---
+
+## contrast
 
 ```typescript
 .contrast(factor: number): Pipeline
@@ -98,30 +157,46 @@ await img('photo.jpg').brightness(1.2).toBuffer()
 Multiply contrast. `1.0` is unchanged.
 
 ```typescript
+// Increase contrast
 await img('photo.jpg').contrast(1.3).toBuffer()
+
+// Reduce contrast (flatten)
+await img('photo.jpg').contrast(0.8).toBuffer()
 ```
 
-## Saturation
+---
+
+## saturation
 
 ```typescript
 .saturation(factor: number): Pipeline
 ```
 
-Multiply saturation. `0` produces grayscale, `1.0` is unchanged.
+Multiply colour saturation. `0` produces greyscale, `1.0` is unchanged.
 
 ```typescript
+// Vibrant colours
 await img('photo.jpg').saturation(1.5).toBuffer()
+
+// Desaturate (muted tones)
+await img('photo.jpg').saturation(0.5).toBuffer()
+
+// Full greyscale via saturation
+await img('photo.jpg').saturation(0).toBuffer()
 ```
+
+---
 
 ## Combining filters
 
-Filters chain like any other operation:
+Filters chain in order, left to right:
 
 ```typescript
 await img('photo.jpg')
-  .brightness(1.1)
-  .contrast(1.2)
-  .saturation(0.9)
+  .resize(1200)
+  .brightness(1.05)
+  .contrast(1.1)
+  .saturation(1.2)
   .sharpen()
   .webp({ quality: 85 })
   .toBuffer()

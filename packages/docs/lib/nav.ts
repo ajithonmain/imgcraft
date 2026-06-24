@@ -16,9 +16,9 @@ export const navigation: NavSection[] = [
   {
     title: 'Core API',
     items: [
-      { title: 'Resize', href: '/docs/api/resize' },
-      { title: 'Format', href: '/docs/api/format' },
+      { title: 'Transforms', href: '/docs/api/transforms' },
       { title: 'Filters', href: '/docs/api/filters' },
+      { title: 'Format', href: '/docs/api/format' },
       { title: 'Composite', href: '/docs/api/composite' },
       { title: 'Metadata', href: '/docs/api/metadata' },
     ],

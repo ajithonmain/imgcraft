@@ -1,0 +1,143 @@
+# Transforms
+
+<Badge variant="node">Node</Badge> <Badge variant="browser">Browser</Badge>
+
+Geometric operations: resize, crop, rotate, flip, and flop.
+
+## resize
+
+```typescript
+.resize(width?: number, height?: number, options?: ResizeOptions): Pipeline
+```
+
+Scale an image to a target size. Pass only `width` or only `height` to resize proportionally.
+
+### Options
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `fit` | `'cover' \| 'contain' \| 'fill' \| 'inside' \| 'outside'` | `'cover'` | How the image fits the target dimensions |
+| `withoutEnlargement` | `boolean` | `false` | Never upscale beyond the original size |
+| `background` | `string \| { r, g, b, alpha? }` | `'#000000'` | Fill colour used with `contain` |
+
+### Fit modes
+
+| Mode | Behaviour |
+|---|---|
+| `cover` | Crop to fill exact dimensions, preserving aspect ratio |
+| `contain` | Letterbox to fit within dimensions, preserving aspect ratio |
+| `fill` | Stretch to exact dimensions, ignoring aspect ratio |
+| `inside` | Resize to fit within dimensions, never cropping |
+| `outside` | Resize to fit outside dimensions, never adding padding |
+
+### Examples
+
+```typescript
+// Proportional resize — width only
+await img('photo.jpg').resize(800).toBuffer()
+
+// Exact dimensions, crop to cover
+await img('photo.jpg').resize(800, 600, { fit: 'cover' }).toBuffer()
+
+// Letterbox with white background
+await img('photo.jpg')
+  .resize(800, 600, { fit: 'contain', background: '#ffffff' })
+  .toBuffer()
+
+// Never enlarge small images
+await img('thumbnail.jpg')
+  .resize(400, 400, { fit: 'inside', withoutEnlargement: true })
+  .toBuffer()
+```
+
+---
+
+## crop
+
+```typescript
+.crop(left: number, top: number, width: number, height: number): Pipeline
+```
+
+Extract a rectangular region. Coordinates are in pixels from the top-left corner.
+
+```typescript
+// Extract a 400x300 region starting at (100, 50)
+await img('photo.jpg').crop(100, 50, 400, 300).toBuffer()
+
+// Crop then resize
+await img('photo.jpg')
+  .crop(0, 0, 800, 600)
+  .resize(400, 300)
+  .toBuffer()
+```
+
+<Callout type="info">
+  `crop` extracts a fixed region. For subject-aware cropping use [smartCrop](/docs/api/ai).
+</Callout>
+
+---
+
+## rotate
+
+```typescript
+.rotate(angle: number, options?: RotateOptions): Pipeline
+```
+
+Rotate by degrees. Any angle is accepted; non-right-angle rotations add padding.
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `background` | `string \| { r, g, b, alpha? }` | `'#000000'` | Fill colour for exposed areas |
+
+```typescript
+// 90° clockwise
+await img('photo.jpg').rotate(90).toBuffer()
+
+// 45° with white fill
+await img('photo.jpg').rotate(45, { background: '#ffffff' }).toBuffer()
+
+// Auto-rotate based on EXIF orientation
+await img('photo.jpg').rotate(0).toBuffer()
+```
+
+---
+
+## flip
+
+```typescript
+.flip(): Pipeline
+```
+
+Flip vertically (top ↔ bottom).
+
+```typescript
+await img('photo.jpg').flip().toBuffer()
+```
+
+---
+
+## flop
+
+```typescript
+.flop(): Pipeline
+```
+
+Flip horizontally (left ↔ right, mirror).
+
+```typescript
+await img('photo.jpg').flop().toBuffer()
+```
+
+---
+
+## Combining transforms
+
+```typescript
+// Crop to subject, resize for web, mirror
+await img('photo.jpg')
+  .crop(200, 100, 600, 600)
+  .resize(400, 400, { fit: 'cover' })
+  .flop()
+  .webp({ quality: 85 })
+  .toBuffer()
+```

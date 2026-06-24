@@ -8,13 +8,15 @@ imgcraft is a chainable image transform pipeline that runs in both Node.js and t
 npm install imgcraft
 ```
 
-Or with pnpm:
+Node.js requires [sharp](https://sharp.pixelplumbing.com/) as an optional peer dependency:
 
 ```bash
-pnpm add imgcraft
+npm install imgcraft sharp
 ```
 
-## Quick example
+Browser usage requires no additional install — WebAssembly is bundled automatically.
+
+## First image
 
 ```typescript
 import { img } from 'imgcraft'
@@ -25,50 +27,107 @@ const buffer = await img('photo.jpg')
   .toBuffer()
 ```
 
-## Node vs Browser
-
-imgcraft auto-detects your runtime. No manual flag needed.
-
-| Environment | Engine | Notes |
-|---|---|---|
-| Node.js | sharp | Full feature set, fastest |
-| Browser | WASM | Same API, runs locally |
-
-```typescript
-// Node.js — uses sharp
-const out = await img('photo.jpg').resize(800).toBuffer()
-
-// Browser — uses WASM, same API
-const out = await img(fileInput).resize(800).toDataURL()
-```
-
-<Callout type="info">
-  AI operations like `removeBackground()` use ONNX and work in both environments without an API key.
-</Callout>
+`img()` accepts a file path (Node.js), `Buffer`, `Uint8Array`, `ArrayBuffer`, or a browser `File` / `Blob`.
 
 ## Output methods
 
 | Method | Returns | Environment |
 |---|---|---|
-| `.toBuffer()` | `Buffer` / `Uint8Array` | Node + Browser |
-| `.toFile(path)` | `void` | Node only |
-| `.toStream()` | `ReadableStream` | Node only |
-| `.toDataURL()` | `string` (base64) | Browser convenience |
+| `.toBuffer()` | `Buffer` (Node) / `Uint8Array` (browser) | Node + Browser |
+| `.toFile(path)` | `Promise<void>` | Node only |
+| `.toStream()` | `ReadableStream<Uint8Array>` | Node only |
+| `.toDataURL()` | `Promise<string>` (base64 data URI) | Browser |
+| `.meta()` | `Promise<MetadataResult>` | Node + Browser |
+
+```typescript
+// Write to disk
+await img('photo.jpg').resize(800).toFile('./output.jpg')
+
+// Stream (e.g. pipe to HTTP response)
+const stream = await img('photo.jpg').resize(800).toStream()
+
+// Browser — display in an <img> tag
+const url = await img(file).resize(400).toDataURL()
+document.querySelector('img').src = url
+```
+
+## Node vs Browser
+
+imgcraft detects your runtime automatically. No flag needed.
+
+| Environment | Engine | Notes |
+|---|---|---|
+| Node.js | sharp | Full feature set, fastest |
+| Browser | WASM | Same API, no server required |
+
+```typescript
+// Node.js — uses sharp
+const out = await img('photo.jpg').resize(800).toBuffer()
+
+// Browser — same API, WASM engine selected automatically
+const out = await img(fileInput).resize(800).toDataURL()
+```
+
+<Callout type="info">
+  AI operations (`removeBackground`, `smartCrop`, `upscale`) are Node.js only — they load ONNX and TensorFlow models on first use.
+</Callout>
+
+## Chaining transforms
+
+Every method returns the same `Pipeline` instance, so transforms compose left to right:
+
+```typescript
+const buffer = await img('photo.jpg')
+  .resize(1200)           // scale down
+  .sharpen()              // recover detail
+  .brightness(1.05)       // slight lift
+  .webp({ quality: 85 }) // encode
+  .toBuffer()
+```
+
+## Batch processing
+
+`batch()` applies the same pipeline to multiple inputs in parallel:
+
+```typescript
+import { batch } from 'imgcraft'
+
+await batch(['a.jpg', 'b.jpg', 'c.jpg'], { concurrency: 4 })
+  .resize(800)
+  .webp({ quality: 85 })
+  .toDir('./output')
+```
+
+Output options:
+
+```typescript
+// Write to a directory (filename preserved, extension changed to match format)
+await batch(inputs).resize(800).webp().toDir('./out')
+
+// Get results as an array of Uint8Array
+const buffers = await batch(inputs).resize(800).toBuffers()
+
+// 1:1 path mapping
+await batch(inputs).resize(800).toFiles(['./a-sm.jpg', './b-sm.jpg', './c-sm.jpg'])
+```
 
 ## TypeScript
 
 imgcraft is written in strict TypeScript. All transforms are fully typed.
 
 ```typescript
-import type { Pipeline } from 'imgcraft'
+import type { Pipeline, MetadataResult } from 'imgcraft'
 
-function processImage(pipeline: Pipeline) {
-  return pipeline.resize(800).webp()
+async function thumbnail(input: string): Promise<Buffer> {
+  return img(input).resize(200, 200, { fit: 'cover' }).jpeg({ quality: 75 }).toBuffer()
 }
 ```
 
 ## Next steps
 
-- [Resize](/docs/api/resize) — fit modes, aspect ratio control
+- [Transforms](/docs/api/transforms) — resize, crop, rotate, flip, flop
+- [Filters](/docs/api/filters) — blur, sharpen, colour adjustments
+- [Format](/docs/api/format) — JPEG, PNG, WebP, AVIF options
 - [AI Operations](/docs/api/ai) — background removal, smart crop, upscale
+- [Batch](/docs/api/batch) — concurrent processing
 - [REST API](/docs/rest-api) — hosted endpoint for any language
