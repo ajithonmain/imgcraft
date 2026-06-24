@@ -42,6 +42,15 @@ export function TopNav() {
               key={href}
               href={href}
               className={`top-nav-link${active ? ' nav-link-active' : ''}`}
+              style={
+                active
+                  ? {
+                      background: 'rgba(34,197,94,0.12)',
+                      color: '#22c55e',
+                      fontWeight: 600,
+                    }
+                  : undefined
+              }
             >
               {label}
             </Link>

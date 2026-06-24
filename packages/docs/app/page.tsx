@@ -104,62 +104,172 @@ const features: Feature[] = [
 export default async function HomePage() {
   return (
     <>
-      <section className="landing-hero">
+      <section
+        style={{
+          position: 'relative',
+          textAlign: 'center',
+          padding: '100px 24px 80px',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Background glow */}
         <div
           style={{
             position: 'absolute',
-            inset: 0,
+            top: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '600px',
+            height: '400px',
             background:
-              'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(34,197,94,0.08) 0%, transparent 70%)',
+              'radial-gradient(ellipse at top, rgba(34,197,94,0.12) 0%, transparent 70%)',
             pointerEvents: 'none',
           }}
         />
-        <div style={{ position: 'relative' }}>
-          <div style={{ marginBottom: '1.25rem' }}>
-            <span
-              style={{
-                border: '1px solid #22c55e33',
-                color: '#22c55e',
-                padding: '2px 10px',
-                borderRadius: '99px',
-                fontSize: '12px',
-              }}
-            >
-              v0.1.9 &middot; MIT &middot; 70 tests passing
-            </span>
-          </div>
-          <h1 className="landing-headline">
-            Image processing
-            <br />
-            for the modern stack
-          </h1>
-          <p className="landing-subline">
-            Compress, convert, resize. AI ops. Node + Browser. Zero config.
-          </p>
-          <div className="landing-ctas">
-            <Link href="/docs/getting-started" className="btn-primary">
-              Get Started &rarr;
-            </Link>
-            <Link href="/playground" className="btn-secondary">
-              Try Playground
-            </Link>
-          </div>
-          <div className="landing-hero-code">
-            <div className="hero-code-block">
-              <div
-                style={{
-                  borderBottom: '1px solid var(--border)',
-                  padding: '8px 16px',
-                  fontSize: '12px',
-                  color: 'var(--text-muted)',
-                  fontFamily: 'monospace',
-                }}
-              >
-                example.ts
-              </div>
-              <CodeBlock code={heroCode} lang="typescript" darkOnly />
-            </div>
-          </div>
+
+        {/* Badge */}
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: 'rgba(34,197,94,0.08)',
+            border: '1px solid rgba(34,197,94,0.25)',
+            borderRadius: '99px',
+            padding: '4px 14px',
+            fontSize: '12px',
+            color: '#22c55e',
+            letterSpacing: '0.02em',
+            marginBottom: '24px',
+          }}
+        >
+          <span
+            style={{
+              width: '6px',
+              height: '6px',
+              background: '#22c55e',
+              borderRadius: '50%',
+              display: 'inline-block',
+            }}
+          />
+          v0.1.9 &middot; MIT &middot; 70 tests passing
+        </div>
+
+        {/* Headline */}
+        <h1
+          style={{
+            fontSize: 'clamp(36px, 6vw, 72px)',
+            fontWeight: 800,
+            lineHeight: 1.05,
+            letterSpacing: '-0.03em',
+            margin: '0 0 20px',
+          }}
+        >
+          Image processing
+          <br />
+          <span style={{ color: '#22c55e' }}>for the modern stack</span>
+        </h1>
+
+        {/* Sub */}
+        <p
+          style={{
+            fontSize: '18px',
+            color: 'var(--text-muted)',
+            maxWidth: '480px',
+            margin: '0 auto 36px',
+            lineHeight: 1.6,
+          }}
+        >
+          Compress JPEG to WebP in one line. Convert formats, remove backgrounds, upscale
+          — chainable API for Node.js and the browser.
+        </p>
+
+        {/* CTAs */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '12px',
+            justifyContent: 'center',
+            marginBottom: '56px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <Link
+            href="/docs/getting-started"
+            style={{
+              background: '#22c55e',
+              color: '#09090b',
+              padding: '11px 24px',
+              borderRadius: '8px',
+              fontWeight: 700,
+              fontSize: '14px',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            Get Started &rarr;
+          </Link>
+          <Link
+            href="/playground"
+            style={{
+              background: 'transparent',
+              color: 'var(--text)',
+              padding: '11px 24px',
+              borderRadius: '8px',
+              fontWeight: 600,
+              fontSize: '14px',
+              textDecoration: 'none',
+              border: '1px solid var(--border)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            Try Playground
+          </Link>
+        </div>
+
+        {/* Stat callout */}
+        <div
+          style={{
+            display: 'inline-flex',
+            gap: '32px',
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border)',
+            borderRadius: '12px',
+            padding: '14px 28px',
+            marginBottom: '40px',
+            fontSize: '13px',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+          }}
+        >
+          <span>
+            <strong style={{ color: 'var(--text)' }}>3.5MB</strong>{' '}
+            <span style={{ color: 'var(--text-muted)' }}>JPEG</span>
+          </span>
+          <span style={{ color: 'var(--text-muted)' }}>&rarr;</span>
+          <span>
+            <strong style={{ color: '#22c55e' }}>60KB</strong>{' '}
+            <span style={{ color: 'var(--text-muted)' }}>WebP</span>
+          </span>
+          <span style={{ color: 'var(--border)' }}>|</span>
+          <span>
+            <strong style={{ color: 'var(--text)' }}>98%</strong>{' '}
+            <span style={{ color: 'var(--text-muted)' }}>smaller</span>
+          </span>
+          <span style={{ color: 'var(--border)' }}>|</span>
+          <span>
+            <strong style={{ color: 'var(--text)' }}>one</strong>{' '}
+            <span style={{ color: 'var(--text-muted)' }}>method call</span>
+          </span>
+        </div>
+
+        {/* Code block */}
+        <div className="landing-hero-code">
+          <CodeBlock code={heroCode} lang="typescript" filename="example.ts" />
         </div>
       </section>
 
@@ -177,9 +287,7 @@ export default async function HomePage() {
               </div>
               <div className="feature-card-title">{f.title}</div>
               <div className="feature-card-desc">{f.desc}</div>
-              {f.extra && (
-                <div style={{ marginTop: '8px' }}>{f.extra}</div>
-              )}
+              {f.extra && <div style={{ marginTop: '8px' }}>{f.extra}</div>}
             </div>
           )
         })}
