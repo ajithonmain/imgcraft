@@ -1,5 +1,6 @@
 import { redirect, notFound } from 'next/navigation'
 import { MDXRemote } from 'next-mdx-remote/rsc'
+import remarkGfm from 'remark-gfm'
 import Link from 'next/link'
 import { getContent } from '../../../lib/content'
 import { allNavItems, getAdjacentPages } from '../../../lib/nav'
@@ -35,7 +36,11 @@ export default async function DocsPage({ params }: Props) {
 
   return (
     <article className="docs-content">
-      <MDXRemote source={source} components={mdxComponents} />
+      <MDXRemote
+        source={source}
+        components={mdxComponents}
+        options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+      />
       <nav className="docs-nav">
         {prev != null ? (
           <Link href={prev.href} className="docs-nav-link">
