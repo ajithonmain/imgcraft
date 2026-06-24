@@ -95,11 +95,26 @@ async function loadUpscaler(factor: 2 | 4): Promise<UpscalerLike> {
 
 // --- Public transform functions ---
 
+// Max dimension for background removal. The ONNX model works at low resolution
+// internally anyway; feeding it a 4K image inflates memory ~6× with no quality gain.
+const BG_REMOVAL_MAX_DIM = 1024
+
 export async function applyRemoveBackground(input: Buffer | Uint8Array): Promise<Buffer> {
   const removeBg = await loadBgRemoval()
+  const sharpMod = await import('sharp')
+  const sharp = sharpMod.default
 
-  // Copy into a fresh ArrayBuffer so Blob constructor gets Uint8Array<ArrayBuffer> (not ArrayBufferLike)
-  const bytes = Uint8Array.from(input)
+  const src = input instanceof Buffer ? input : Buffer.from(input)
+
+  // Resize down before background removal to stay within server memory limits.
+  const meta = await sharp(src).metadata()
+  const maxDim = Math.max(meta.width ?? 0, meta.height ?? 0)
+  const resized =
+    maxDim > BG_REMOVAL_MAX_DIM
+      ? await sharp(src).resize(BG_REMOVAL_MAX_DIM, BG_REMOVAL_MAX_DIM, { fit: 'inside' }).png().toBuffer()
+      : src
+
+  const bytes = Uint8Array.from(resized)
   const blob = new Blob([bytes], { type: 'image/png' })
 
   try {
