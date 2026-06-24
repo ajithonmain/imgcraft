@@ -23,7 +23,7 @@ jobs:
 
       - run: pnpm --filter imgcraft typecheck
 
-      - run: pnpm --filter imgcraft test run
+      - run: pnpm --filter imgcraft test
 
       - run: pnpm --filter imgcraft build
 

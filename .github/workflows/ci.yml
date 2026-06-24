@@ -25,4 +25,4 @@ jobs:
 
       - run: pnpm --filter imgcraft exec tsc --noEmit
 
-      - run: pnpm --filter imgcraft test run
+      - run: pnpm --filter imgcraft test
