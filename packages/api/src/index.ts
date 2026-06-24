@@ -4,6 +4,8 @@ import { rateLimit } from './middleware/ratelimit.js'
 import { health } from './routes/health.js'
 import { info } from './routes/info.js'
 import { transform } from './routes/transform.js'
+import { handleDocs, handleOpenAPIJson } from './routes/docs.js'
+import spec from './openapi.js'
 
 export interface Env {
   RATE_LIMIT_RPM: string
@@ -18,6 +20,11 @@ export interface Env {
 const app = new Hono<{ Bindings: Env }>()
 
 app.use('*', cors)
+
+// /docs routes bypass rate limiting
+app.get('/docs', () => handleDocs())
+app.get('/docs/openapi.json', () => handleOpenAPIJson(spec))
+
 app.use('*', rateLimit)
 
 app.route('/health', health)
