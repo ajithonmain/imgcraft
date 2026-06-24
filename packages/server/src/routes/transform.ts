@@ -18,6 +18,7 @@ const MIME: Record<string, string> = {
 export const transform = new Hono()
 
 transform.post('/', async (c) => {
+  console.log('[transform] request received')
   const contentType = c.req.header('Content-Type') ?? ''
   if (!contentType.includes('multipart/form-data')) {
     return c.json({ error: 'Expected multipart/form-data', code: 'INVALID_CONTENT_TYPE' }, 400)

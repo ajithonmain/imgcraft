@@ -13,6 +13,11 @@ app.route('/health', health)
 app.route('/info', info)
 app.route('/transform', transform)
 
+app.onError((err, c) => {
+  console.error('[server] unhandled error:', err)
+  return c.json({ error: err.message, code: 'INTERNAL_ERROR' }, 500)
+})
+
 const port = parseInt(process.env['PORT'] ?? '3001', 10)
 
 serve({ fetch: app.fetch, port }, () => {
