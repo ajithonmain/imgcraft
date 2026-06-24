@@ -71,6 +71,7 @@ transform.post('/', async (c) => {
       headers: { 'Content-Type': mime },
     })
   } catch (caught) {
+    console.error('[transform] pipeline error:', caught)
     if (caught instanceof ImgCraftError) {
       return c.json({ error: caught.message, code: caught.code }, 422)
     }
