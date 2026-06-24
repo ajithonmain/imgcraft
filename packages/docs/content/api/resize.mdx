@@ -1,0 +1,53 @@
+# Resize
+
+<Badge variant="node">Node</Badge> <Badge variant="browser">Browser</Badge>
+
+Scale images to a target size. Preserves aspect ratio by default.
+
+## Signature
+
+```typescript
+.resize(width?: number, height?: number, options?: ResizeOptions): Pipeline
+```
+
+## Options
+
+<ApiTable rows={[
+  { name: 'width', type: 'number', default: 'undefined', description: 'Target width in pixels.' },
+  { name: 'height', type: 'number', default: 'undefined', description: 'Target height in pixels.' },
+  { name: 'fit', type: "'cover' | 'contain' | 'fill' | 'inside' | 'outside'", default: "'cover'", description: 'How the image is fitted to the target dimensions.' },
+  { name: 'withoutEnlargement', type: 'boolean', default: 'false', description: 'Do not enlarge if the width or height are already less than the target.' },
+  { name: 'background', type: 'string', default: "'#000000'", description: 'Background color used with contain or fill.' },
+]} />
+
+## Fit modes
+
+| Mode | Behaviour |
+|---|---|
+| `cover` | Crop to fill exact dimensions, preserving aspect ratio |
+| `contain` | Letterbox to fit within dimensions, preserving aspect ratio |
+| `fill` | Stretch to exact dimensions, ignoring aspect ratio |
+| `inside` | Resize to fit within dimensions, never cropping |
+| `outside` | Resize to fit outside dimensions, never adding padding |
+
+## Examples
+
+```typescript
+// Resize to 800px wide, keep aspect ratio
+await img('photo.jpg').resize(800).toBuffer()
+
+// Resize to exact 800x600, crop to cover
+await img('photo.jpg').resize(800, 600, { fit: 'cover' }).toBuffer()
+
+// Fit within 400x400 without enlarging
+await img('photo.jpg').resize(400, 400, { fit: 'inside', withoutEnlargement: true }).toBuffer()
+
+// Letterbox with white background
+await img('photo.jpg')
+  .resize(800, 600, { fit: 'contain', background: '#ffffff' })
+  .toBuffer()
+```
+
+<Callout type="tip">
+  Pass only `width` or only `height` to resize proportionally without specifying both dimensions.
+</Callout>

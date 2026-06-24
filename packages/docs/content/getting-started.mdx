@@ -1,0 +1,74 @@
+# Getting Started
+
+imgcraft is a chainable image transform pipeline that runs in both Node.js and the browser. One API, everywhere.
+
+## Install
+
+```bash
+npm install imgcraft
+```
+
+Or with pnpm:
+
+```bash
+pnpm add imgcraft
+```
+
+## Quick example
+
+```typescript
+import { img } from 'imgcraft'
+
+const buffer = await img('photo.jpg')
+  .resize(800, 600)
+  .webp({ quality: 85 })
+  .toBuffer()
+```
+
+## Node vs Browser
+
+imgcraft auto-detects your runtime. No manual flag needed.
+
+| Environment | Engine | Notes |
+|---|---|---|
+| Node.js | sharp | Full feature set, fastest |
+| Browser | WASM | Same API, runs locally |
+
+```typescript
+// Node.js — uses sharp
+const out = await img('photo.jpg').resize(800).toBuffer()
+
+// Browser — uses WASM, same API
+const out = await img(fileInput).resize(800).toDataURL()
+```
+
+<Callout type="info">
+  AI operations like `removeBackground()` use ONNX and work in both environments without an API key.
+</Callout>
+
+## Output methods
+
+| Method | Returns | Environment |
+|---|---|---|
+| `.toBuffer()` | `Buffer` / `Uint8Array` | Node + Browser |
+| `.toFile(path)` | `void` | Node only |
+| `.toStream()` | `ReadableStream` | Node only |
+| `.toDataURL()` | `string` (base64) | Browser convenience |
+
+## TypeScript
+
+imgcraft is written in strict TypeScript. All transforms are fully typed.
+
+```typescript
+import type { Pipeline } from 'imgcraft'
+
+function processImage(pipeline: Pipeline) {
+  return pipeline.resize(800).webp()
+}
+```
+
+## Next steps
+
+- [Resize](/docs/api/resize) — fit modes, aspect ratio control
+- [AI Operations](/docs/api/ai) — background removal, smart crop, upscale
+- [REST API](/docs/rest-api) — hosted endpoint for any language

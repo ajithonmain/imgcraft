@@ -1,0 +1,64 @@
+# Composite
+
+<Badge variant="node">Node</Badge>
+
+Overlay images, add watermarks, and composite layers.
+
+## composite()
+
+```typescript
+.composite(input: string | Buffer, options?: CompositeOptions): Pipeline
+```
+
+Overlay another image on top of the current image.
+
+## Options
+
+<ApiTable rows={[
+  { name: 'input', type: 'string | Buffer', description: 'Path to the overlay image or a Buffer.' },
+  { name: 'gravity', type: "Gravity", default: "'center'", description: "Position of the overlay: 'north', 'south', 'east', 'west', 'center', 'northeast', 'northwest', 'southeast', 'southwest'." },
+  { name: 'top', type: 'number', default: 'undefined', description: 'Vertical offset in pixels from top. Overrides gravity.' },
+  { name: 'left', type: 'number', default: 'undefined', description: 'Horizontal offset in pixels from left. Overrides gravity.' },
+  { name: 'blend', type: "BlendMode", default: "'over'", description: "Blend mode: 'over', 'multiply', 'screen', 'add', 'saturate', etc." },
+  { name: 'opacity', type: 'number', default: '1', description: 'Overlay opacity 0–1.' },
+  { name: 'tile', type: 'boolean', default: 'false', description: 'Tile the overlay across the entire image.' },
+]} />
+
+## Watermark example
+
+```typescript
+await img('photo.jpg')
+  .composite('watermark.png', {
+    gravity: 'southeast',
+    opacity: 0.7,
+  })
+  .webp({ quality: 85 })
+  .toBuffer()
+```
+
+## Pixel offset positioning
+
+```typescript
+await img('photo.jpg')
+  .composite('logo.png', {
+    top: 20,
+    left: 20,
+  })
+  .toBuffer()
+```
+
+## Tiled watermark
+
+```typescript
+await img('photo.jpg')
+  .composite('pattern.png', {
+    tile: true,
+    opacity: 0.15,
+    blend: 'multiply',
+  })
+  .toBuffer()
+```
+
+<Callout type="warning">
+  `composite()` is Node only — the WASM browser engine does not support multi-image compositing in v1.
+</Callout>

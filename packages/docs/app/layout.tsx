@@ -1,15 +1,35 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import { GeistSans } from 'geist/font/sans'
+import { GeistMono } from 'geist/font/mono'
+import { TopNav } from '../components/top-nav'
+import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'imgcraft',
-  description: 'Chainable image transform pipeline for Node and browser',
+  title: 'imgcraft — Image processing for the modern stack',
+  description:
+    'Chainable image transforms, AI ops, Node + Browser WASM. The sharp alternative built for 2025.',
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" data-theme="dark" suppressHydrationWarning style={
+      {
+        '--font-sans': GeistSans.style.fontFamily,
+        '--font-mono': GeistMono.style.fontFamily,
+      } as React.CSSProperties
+    }>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}`,
+          }}
+        />
+      </head>
+      <body className={`${GeistSans.variable} ${GeistMono.variable}`}>
+        <TopNav />
+        {children}
+      </body>
     </html>
   )
 }

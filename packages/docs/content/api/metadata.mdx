@@ -1,0 +1,70 @@
+# Metadata
+
+<Badge variant="node">Node</Badge> <Badge variant="browser">Browser</Badge>
+
+Read and strip image metadata.
+
+## meta()
+
+```typescript
+.meta(): Promise<ImageMetadata>
+```
+
+Read image metadata without processing the image. Returns a Promise directly — do not chain after calling `.meta()`.
+
+### Returns
+
+<ApiTable rows={[
+  { name: 'width', type: 'number', description: 'Image width in pixels.' },
+  { name: 'height', type: 'number', description: 'Image height in pixels.' },
+  { name: 'format', type: 'string', description: "Format: 'jpeg', 'png', 'webp', 'avif', etc." },
+  { name: 'channels', type: 'number', description: 'Number of channels (3 = RGB, 4 = RGBA).' },
+  { name: 'hasAlpha', type: 'boolean', description: 'Whether the image has an alpha channel.' },
+  { name: 'size', type: 'number', description: 'File size in bytes.' },
+  { name: 'exif', type: 'Record<string, unknown> | undefined', description: 'Parsed EXIF data, if present.' },
+  { name: 'icc', type: 'Buffer | undefined', description: 'Raw ICC color profile, if present.' },
+]} />
+
+### Example
+
+```typescript
+const meta = await img('photo.jpg').meta()
+
+console.log(meta.width)   // 3840
+console.log(meta.height)  // 2160
+console.log(meta.format)  // 'jpeg'
+console.log(meta.hasAlpha) // false
+```
+
+## stripMeta()
+
+```typescript
+.stripMeta(): Pipeline
+```
+
+Remove all metadata (EXIF, ICC, XMP, IPTC) from the output. Useful for privacy or to reduce file size.
+
+```typescript
+await img('photo.jpg')
+  .resize(1200)
+  .stripMeta()
+  .webp({ quality: 85 })
+  .toBuffer()
+```
+
+<Callout type="tip">
+  Stripping metadata typically saves 10–50KB from camera photos, which often embed GPS coordinates, camera model, and thumbnail previews.
+</Callout>
+
+## Read then process
+
+```typescript
+const meta = await img('photo.jpg').meta()
+
+// Decide processing based on metadata
+const pipeline = img('photo.jpg')
+if (meta.width > 2000) {
+  pipeline.resize(1600)
+}
+const buffer = await pipeline.webp().toBuffer()
+```

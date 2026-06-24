@@ -1,0 +1,98 @@
+# AI Operations
+
+<Badge variant="node">Node</Badge> <Badge variant="browser">Browser</Badge> <Badge variant="ai">AI</Badge>
+
+AI-powered transforms. No API key required — all models run locally via ONNX.
+
+<Callout type="info">
+  AI models are lazy-loaded on first use. Expect a short delay on the first call as the model downloads and initialises. Subsequent calls are fast.
+</Callout>
+
+## removeBackground()
+
+```typescript
+.removeBackground(): Pipeline
+```
+
+Remove the image background using a U2-Net ONNX model. Outputs a PNG with transparent background (alpha channel).
+
+```typescript
+const png = await img('portrait.jpg')
+  .removeBackground()
+  .toBuffer()
+
+// In browser
+const dataUrl = await img(file)
+  .removeBackground()
+  .toDataURL()
+```
+
+The output format is always PNG when background removal is used, regardless of the downstream format operation. Chain a format conversion if you need a specific output:
+
+```typescript
+await img('photo.jpg')
+  .removeBackground()
+  .resize(800)
+  .png()
+  .toBuffer()
+```
+
+## smartCrop()
+
+```typescript
+.smartCrop(subject?: 'face' | 'object'): Pipeline
+```
+
+Content-aware cropping using COCO-SSD object detection. Identifies the primary subject and crops to keep it centred.
+
+<ApiTable rows={[
+  { name: 'subject', type: "'face' | 'object'", default: "'object'", description: "Hint for detection model. 'face' prioritises face regions, 'object' uses general object detection." },
+]} />
+
+```typescript
+// Crop to 400x400 keeping the main subject
+await img('portrait.jpg')
+  .smartCrop('face')
+  .resize(400, 400, { fit: 'cover' })
+  .webp()
+  .toBuffer()
+```
+
+<Callout type="tip">
+  Chain `smartCrop()` before `resize()`. The crop happens first, then the resize scales the result to your target dimensions.
+</Callout>
+
+## upscale()
+
+```typescript
+.upscale(factor?: 2 | 4): Pipeline
+```
+
+AI upscaling using ESRGAN. Increases resolution while recovering detail that conventional bicubic interpolation loses.
+
+<ApiTable rows={[
+  { name: 'factor', type: '2 | 4', default: '2', description: 'Upscale multiplier. 2x doubles dimensions, 4x quadruples.' },
+]} />
+
+```typescript
+// 2x upscale (default)
+await img('low-res.jpg').upscale().toBuffer()
+
+// 4x upscale
+await img('thumbnail.jpg').upscale(4).toBuffer()
+```
+
+<Callout type="warning">
+  4x upscaling is memory-intensive. For images above 1MP, prefer 2x and run twice if needed.
+</Callout>
+
+## Combining AI ops
+
+```typescript
+// Remove background, upscale, export
+await img('product.jpg')
+  .removeBackground()
+  .upscale(2)
+  .png()
+  .toBuffer()
+```

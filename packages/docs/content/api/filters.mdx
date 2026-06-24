@@ -1,0 +1,128 @@
+# Filters
+
+<Badge variant="node">Node</Badge> <Badge variant="browser">Browser</Badge>
+
+Apply visual adjustments and effects to images.
+
+## Blur
+
+```typescript
+.blur(sigma?: number): Pipeline
+```
+
+Gaussian blur. `sigma` controls the blur radius (default: mild blur).
+
+```typescript
+await img('photo.jpg').blur(3).toBuffer()
+```
+
+## Sharpen
+
+```typescript
+.sharpen(sigma?: number, flat?: number, jagged?: number): Pipeline
+```
+
+Unsharp mask sharpening.
+
+```typescript
+await img('photo.jpg').sharpen().toBuffer()
+await img('photo.jpg').sharpen(1, 1, 2).toBuffer()
+```
+
+## Median
+
+```typescript
+.median(size?: number): Pipeline
+```
+
+Median filter for noise reduction. `size` is the kernel size (default: 3).
+
+```typescript
+await img('photo.jpg').median(3).toBuffer()
+```
+
+## Grayscale
+
+```typescript
+.grayscale(): Pipeline
+```
+
+Convert to grayscale.
+
+```typescript
+await img('photo.jpg').grayscale().toBuffer()
+```
+
+## Tint
+
+```typescript
+.tint(color: string): Pipeline
+```
+
+Apply a color tint. Accepts hex or CSS color strings.
+
+```typescript
+await img('photo.jpg').tint('#ff6600').toBuffer()
+```
+
+## Negate
+
+```typescript
+.negate(): Pipeline
+```
+
+Invert pixel values (negative effect).
+
+```typescript
+await img('photo.jpg').negate().toBuffer()
+```
+
+## Brightness
+
+```typescript
+.brightness(factor: number): Pipeline
+```
+
+Multiply brightness. `1.0` is unchanged, `1.5` is 50% brighter, `0.5` is darker.
+
+```typescript
+await img('photo.jpg').brightness(1.2).toBuffer()
+```
+
+## Contrast
+
+```typescript
+.contrast(factor: number): Pipeline
+```
+
+Multiply contrast. `1.0` is unchanged.
+
+```typescript
+await img('photo.jpg').contrast(1.3).toBuffer()
+```
+
+## Saturation
+
+```typescript
+.saturation(factor: number): Pipeline
+```
+
+Multiply saturation. `0` produces grayscale, `1.0` is unchanged.
+
+```typescript
+await img('photo.jpg').saturation(1.5).toBuffer()
+```
+
+## Combining filters
+
+Filters chain like any other operation:
+
+```typescript
+await img('photo.jpg')
+  .brightness(1.1)
+  .contrast(1.2)
+  .saturation(0.9)
+  .sharpen()
+  .webp({ quality: 85 })
+  .toBuffer()
+```

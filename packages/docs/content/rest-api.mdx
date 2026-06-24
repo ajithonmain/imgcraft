@@ -1,0 +1,165 @@
+# REST API Reference
+
+A hosted Cloudflare Worker that processes images over HTTP. No SDK required — POST an image, receive a transformed image.
+
+**Base URL:** `https://api.imgcraft.dev`
+
+## Endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/transform` | Process an image, returns transformed bytes |
+| `GET` | `/info` | Read metadata without processing |
+| `GET` | `/health` | Status check |
+
+---
+
+## POST /transform
+
+Process an image with a pipeline of operations.
+
+**Content-Type:** `multipart/form-data`
+
+### Fields
+
+<ApiTable rows={[
+  { name: 'image', type: 'File', description: 'The image to process. Required.' },
+  { name: 'ops', type: 'string (JSON)', description: 'Array of operation objects. See ops schema below.' },
+]} />
+
+### Response
+
+- `Content-Type`: `image/webp` (or the requested format)
+- Body: processed image bytes
+
+### ops JSON schema
+
+Each operation is an object with an `op` field plus operation-specific parameters:
+
+```json
+[
+  { "op": "resize", "width": 800, "height": 600, "fit": "cover" },
+  { "op": "format", "type": "webp", "quality": 85 },
+  { "op": "grayscale" },
+  { "op": "removeBackground" }
+]
+```
+
+### Supported operations
+
+| op | Parameters |
+|---|---|
+| `resize` | `width`, `height`, `fit` |
+| `crop` | `top`, `left`, `width`, `height` |
+| `rotate` | `angle` |
+| `flip` | — |
+| `flop` | — |
+| `format` | `type` (`jpeg`, `png`, `webp`, `avif`), `quality` |
+| `blur` | `sigma` |
+| `sharpen` | — |
+| `grayscale` | — |
+| `tint` | `color` |
+| `negate` | — |
+| `brightness` | `factor` |
+| `contrast` | `factor` |
+| `saturation` | `factor` |
+| `removeBackground` | — |
+| `upscale` | `factor` (2 or 4) |
+| `smartCrop` | `subject` (`face`, `object`) |
+| `stripMeta` | — |
+
+### Example (curl)
+
+```bash
+curl -X POST https://api.imgcraft.dev/transform \
+  -F "image=@photo.jpg" \
+  -F 'ops=[{"op":"resize","width":800},{"op":"format","type":"webp","quality":85}]' \
+  --output result.webp
+```
+
+### Example (fetch)
+
+```typescript
+const form = new FormData()
+form.append('image', file)
+form.append('ops', JSON.stringify([
+  { op: 'resize', width: 800 },
+  { op: 'webp', quality: 85 },
+]))
+
+const res = await fetch('https://api.imgcraft.dev/transform', {
+  method: 'POST',
+  body: form,
+})
+
+const blob = await res.blob()
+```
+
+---
+
+## GET /info
+
+Read image metadata without processing. Accepts a URL query parameter.
+
+```
+GET /info?url=https://example.com/photo.jpg
+```
+
+Or POST with a file:
+
+```
+POST /info
+Content-Type: multipart/form-data
+
+image: File
+```
+
+### Response
+
+```json
+{
+  "width": 3840,
+  "height": 2160,
+  "format": "jpeg",
+  "channels": 3,
+  "hasAlpha": false,
+  "size": 4521823
+}
+```
+
+---
+
+## GET /health
+
+```
+GET /health
+```
+
+```json
+{ "status": "ok", "version": "1.0.0" }
+```
+
+---
+
+## Rate limiting
+
+Requests are rate-limited by IP address. Default: **60 requests per minute**.
+
+Exceeding the limit returns `HTTP 429` with a `Retry-After` header.
+
+---
+
+## Errors
+
+All errors return JSON:
+
+```json
+{
+  "error": "Invalid image format",
+  "code": "INVALID_FORMAT"
+}
+```
+
+<Callout type="warning">
+  The API is intended for moderate usage. For high-volume workloads, use the imgcraft npm library directly in your own infrastructure.
+</Callout>

@@ -1,8 +1,94 @@
-export default function HomePage() {
+import Link from 'next/link'
+import { CodeBlock } from '../components/code-block'
+import { CopyButton } from '../components/copy-button'
+
+const heroCode = `import { img } from 'imgcraft'
+
+const buffer = await img('photo.jpg')
+  .resize(800)
+  .removeBackground()
+  .webp({ quality: 85 })
+  .toBuffer()`
+
+const features = [
+  {
+    title: 'Node + Browser',
+    desc: 'One API, runs everywhere. Sharp for Node, WASM for browser.',
+  },
+  {
+    title: 'AI Built-in',
+    desc: 'Background removal, smart crop, upscale. No API key, runs locally.',
+  },
+  {
+    title: 'Chainable API',
+    desc: 'Compose transforms like sentences. Readable, typed, predictable.',
+  },
+  {
+    title: 'Batch Ready',
+    desc: 'Process thousands of images with concurrency control.',
+  },
+  {
+    title: 'TypeScript First',
+    desc: 'Strict types throughout. Zero any. Full autocomplete.',
+  },
+  {
+    title: 'Hosted API',
+    desc: 'REST endpoint at api.imgcraft.dev. POST an image, get transforms.',
+  },
+]
+
+export default async function HomePage() {
   return (
-    <main>
-      <h1>imgcraft</h1>
-      <p>Chainable image transform pipeline — Node + Browser WASM.</p>
-    </main>
+    <>
+      <section className="landing-hero">
+        <h1 className="landing-headline">
+          Image processing
+          <br />
+          for the modern stack
+        </h1>
+        <p className="landing-subline">
+          Chainable transforms, AI ops, Node + Browser. The sharp alternative built for 2025.
+        </p>
+        <div className="landing-ctas">
+          <Link href="/docs/getting-started" className="btn-primary">
+            Get Started &rarr;
+          </Link>
+          <Link href="/playground" className="btn-secondary">
+            Try Playground
+          </Link>
+        </div>
+        <div className="landing-hero-code">
+          <CodeBlock code={heroCode} lang="typescript" />
+        </div>
+      </section>
+
+      <div className="feature-grid">
+        {features.map((f) => (
+          <div key={f.title} className="feature-card">
+            <div className="feature-card-title">{f.title}</div>
+            <div className="feature-card-desc">{f.desc}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="stats-bar">
+        <span>65 tests passing</span>
+        <span className="stats-bar-divider" />
+        <span>Node + Browser</span>
+        <span className="stats-bar-divider" />
+        <span>MIT License</span>
+        <span className="stats-bar-divider" />
+        <span>Zero config</span>
+      </div>
+
+      <div className="install-section">
+        <h2>Install</h2>
+        <div className="install-snippet">
+          <span className="prompt">$</span>
+          <span>npm install imgcraft</span>
+          <CopyButton text="npm install imgcraft" />
+        </div>
+      </div>
+    </>
   )
 }

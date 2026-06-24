@@ -1,0 +1,72 @@
+# Format
+
+<Badge variant="node">Node</Badge> <Badge variant="browser">Browser</Badge>
+
+Convert images between formats with per-format quality and encoding options.
+
+## Format methods
+
+```typescript
+.jpeg(options?: JpegOptions): Pipeline
+.png(options?: PngOptions): Pipeline
+.webp(options?: WebpOptions): Pipeline
+.avif(options?: AvifOptions): Pipeline
+```
+
+Or use the generic method:
+
+```typescript
+.format(type: 'jpeg' | 'png' | 'webp' | 'avif', options?: FormatOptions): Pipeline
+```
+
+## JPEG options
+
+<ApiTable rows={[
+  { name: 'quality', type: 'number', default: '80', description: 'Quality 1–100. Lower = smaller file.' },
+  { name: 'progressive', type: 'boolean', default: 'false', description: 'Enable progressive (interlaced) JPEG.' },
+  { name: 'mozjpeg', type: 'boolean', default: 'false', description: 'Use MozJPEG encoder for better compression.' },
+]} />
+
+## PNG options
+
+<ApiTable rows={[
+  { name: 'quality', type: 'number', default: '100', description: 'Quality 1–100 (lossless if 100).' },
+  { name: 'compressionLevel', type: 'number', default: '6', description: 'zlib compression level 0–9.' },
+  { name: 'progressive', type: 'boolean', default: 'false', description: 'Enable interlaced PNG.' },
+]} />
+
+## WebP options
+
+<ApiTable rows={[
+  { name: 'quality', type: 'number', default: '80', description: 'Quality 1–100.' },
+  { name: 'lossless', type: 'boolean', default: 'false', description: 'Enable lossless WebP.' },
+  { name: 'effort', type: 'number', default: '4', description: 'Compression effort 0–6. Higher = smaller, slower.' },
+]} />
+
+## AVIF options
+
+<ApiTable rows={[
+  { name: 'quality', type: 'number', default: '50', description: 'Quality 1–100.' },
+  { name: 'effort', type: 'number', default: '4', description: 'Compression effort 0–9.' },
+  { name: 'lossless', type: 'boolean', default: 'false', description: 'Enable lossless encoding.' },
+]} />
+
+## Examples
+
+```typescript
+// Convert to WebP at 85% quality
+await img('photo.jpg').webp({ quality: 85 }).toBuffer()
+
+// Lossless PNG
+await img('photo.jpg').png({ quality: 100 }).toBuffer()
+
+// High-efficiency AVIF
+await img('photo.jpg').avif({ quality: 50, effort: 6 }).toBuffer()
+
+// Generic format method
+await img('photo.jpg').format('webp', { quality: 80 }).toBuffer()
+```
+
+<Callout type="info">
+  WebP typically achieves 25–35% smaller files than JPEG at equivalent visual quality. AVIF goes further but is slower to encode.
+</Callout>

@@ -1,0 +1,91 @@
+# Batch Processing
+
+<Badge variant="node">Node</Badge>
+
+Process multiple images with the same pipeline and configurable concurrency.
+
+## batch()
+
+```typescript
+import { batch } from 'imgcraft'
+
+batch(inputs: (string | Buffer)[]): BatchPipeline
+```
+
+Create a batch pipeline from an array of file paths or Buffers. Supports the same chainable API as `img()`.
+
+## Output methods
+
+Batch pipelines have a different final step — instead of `.toBuffer()`, use:
+
+```typescript
+.toDir(outputDir: string, options?: ToDirOptions): Promise<BatchResult[]>
+.toBuffers(): Promise<Buffer[]>
+```
+
+## toDir() options
+
+<ApiTable rows={[
+  { name: 'suffix', type: 'string', default: "''", description: 'Append a suffix to the output filename before the extension.' },
+  { name: 'prefix', type: 'string', default: "''", description: 'Prepend a prefix to the output filename.' },
+  { name: 'overwrite', type: 'boolean', default: 'true', description: 'Overwrite existing files.' },
+  { name: 'concurrency', type: 'number', default: 'os.cpus().length', description: 'Max images processed in parallel.' },
+]} />
+
+## Examples
+
+### Resize and convert a folder
+
+```typescript
+import { batch } from 'imgcraft'
+import { glob } from 'glob'
+
+const files = await glob('./photos/*.jpg')
+
+await batch(files)
+  .resize(1200)
+  .webp({ quality: 85 })
+  .toDir('./output', { suffix: '-optimised' })
+```
+
+### Process with progress tracking
+
+```typescript
+const results = await batch(files)
+  .resize(800)
+  .webp()
+  .toDir('./output', { concurrency: 4 })
+
+console.log(`Processed ${results.length} images`)
+```
+
+### Collect buffers in memory
+
+```typescript
+const buffers = await batch(['a.jpg', 'b.jpg', 'c.jpg'])
+  .resize(400)
+  .webp({ quality: 80 })
+  .toBuffers()
+```
+
+## BatchResult
+
+Each item in the returned array contains:
+
+<ApiTable rows={[
+  { name: 'input', type: 'string | Buffer', description: 'Original input reference.' },
+  { name: 'output', type: 'string', description: 'Output file path (toDir only).' },
+  { name: 'size', type: 'number', description: 'Output file size in bytes.' },
+  { name: 'timing', type: 'number', description: 'Processing time in ms.' },
+]} />
+
+## Concurrency
+
+By default, imgcraft uses one worker per CPU core. Reduce concurrency for AI operations which are more memory-intensive:
+
+```typescript
+await batch(files)
+  .removeBackground()
+  .png()
+  .toDir('./output', { concurrency: 2 })
+```
