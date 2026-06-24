@@ -13,10 +13,16 @@ export const cors: MiddlewareHandler<{ Bindings: Env }> = async (c, next) => {
 
   await next()
 
-  const headers = corsHeaders(origins)
-  for (const [key, value] of Object.entries(headers)) {
-    c.res.headers.set(key, value)
+  // fetch() responses have immutable headers — wrap in a new Response
+  const headers = new Headers(c.res.headers)
+  for (const [key, value] of Object.entries(corsHeaders(origins))) {
+    headers.set(key, value)
   }
+  c.res = new Response(c.res.body, {
+    status: c.res.status,
+    statusText: c.res.statusText,
+    headers,
+  })
 }
 
 function corsHeaders(origins: string): Record<string, string> {
