@@ -33,7 +33,7 @@ const features = [
   },
   {
     title: 'Hosted API',
-    desc: 'REST endpoint at api.imgcraft.dev. POST an image, get transforms.',
+    desc: 'REST endpoint at imgcraft-api.imgcraft.workers.dev. POST an image, get transforms.',
   },
 ]
 
@@ -58,7 +58,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="landing-hero-code">
-          <CodeBlock code={heroCode} lang="typescript" />
+          <CodeBlock code={heroCode} lang="typescript" darkOnly />
         </div>
       </section>
 

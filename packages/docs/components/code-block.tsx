@@ -5,6 +5,7 @@ interface CodeBlockProps {
   code: string
   lang?: string
   filename?: string
+  darkOnly?: boolean
 }
 
 async function highlight(code: string, lang: string, theme: string): Promise<string> {
@@ -15,10 +16,10 @@ async function highlight(code: string, lang: string, theme: string): Promise<str
   }
 }
 
-export async function CodeBlock({ code, lang = 'typescript', filename }: CodeBlockProps) {
+export async function CodeBlock({ code, lang = 'typescript', filename, darkOnly = false }: CodeBlockProps) {
   const [darkHtml, lightHtml] = await Promise.all([
     highlight(code, lang, 'github-dark'),
-    highlight(code, lang, 'github-light'),
+    darkOnly ? Promise.resolve('') : highlight(code, lang, 'github-light'),
   ])
 
   return (
@@ -31,7 +32,7 @@ export async function CodeBlock({ code, lang = 'typescript', filename }: CodeBlo
         <CopyButton text={code} />
       </div>
       <div className="code-dark" dangerouslySetInnerHTML={{ __html: darkHtml }} />
-      <div className="code-light" dangerouslySetInnerHTML={{ __html: lightHtml }} />
+      {!darkOnly && <div className="code-light" dangerouslySetInnerHTML={{ __html: lightHtml }} />}
     </div>
   )
 }

@@ -9,6 +9,19 @@ export const metadata: Metadata = {
   title: 'imgcraft — Image processing for the modern stack',
   description:
     'Chainable image transforms, AI ops, Node + Browser WASM. The sharp alternative built for 2025.',
+  icons: { icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }] },
+  openGraph: {
+    title: 'imgcraft — Image processing for the modern stack',
+    description: 'Chainable transforms, AI ops, Node + Browser WASM.',
+    url: 'https://imgcraft-docs.vercel.app',
+    siteName: 'imgcraft',
+    images: [{ url: '/og.png', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'imgcraft',
+    description: 'Chainable transforms, AI ops, Node + Browser WASM.',
+  },
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
