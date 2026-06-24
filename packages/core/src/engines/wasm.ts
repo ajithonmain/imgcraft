@@ -59,9 +59,12 @@ function outputFormat(ops: readonly PipelineOp[]): { format: string; quality?: n
   for (const op of ops) {
     if (op.op === 'format') {
       format = op.options.format
-      if (op.options.quality !== undefined) quality = op.options.quality
+      quality = op.options.quality
     } else if (op.op === 'quality') {
       quality = op.value
+    } else if (op.op === 'compress') {
+      format = op.options?.format ?? 'webp'
+      if (op.options?.quality !== undefined) quality = op.options.quality
     }
   }
 
@@ -184,6 +187,7 @@ export async function processWasm(state: PipelineState): Promise<EngineResult> {
 
         case 'format':
         case 'quality':
+        case 'compress':
           // Collected above in outputFormat()
           break
       }

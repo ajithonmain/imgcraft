@@ -32,5 +32,6 @@ export type {
   PipelineOp,
   SmartCropOptions,
   UpscaleOptions,
+  CompressOptions,
 } from './types.js'
 export type { BatchResult, BatchOptions } from './batch.js'

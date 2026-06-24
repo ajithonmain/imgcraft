@@ -7,6 +7,8 @@ import { transform } from './routes/transform.js'
 
 export interface Env {
   RATE_LIMIT_RPM: string
+  RATE_LIMIT_DAY: string
+  RATE_LIMIT_AI_DAY: string
   ALLOWED_ORIGINS: string
   RATE_LIMIT_KV: KVNamespace
   SERVER_URL: string

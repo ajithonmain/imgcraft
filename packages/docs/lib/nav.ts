@@ -18,6 +18,7 @@ export const navigation: NavSection[] = [
     items: [
       { title: 'Transforms', href: '/docs/api/transforms' },
       { title: 'Filters', href: '/docs/api/filters' },
+      { title: 'Compression', href: '/docs/api/compress' },
       { title: 'Format', href: '/docs/api/format' },
       { title: 'Composite', href: '/docs/api/composite' },
       { title: 'Metadata', href: '/docs/api/metadata' },

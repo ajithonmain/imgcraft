@@ -2,7 +2,7 @@
 
 A hosted Cloudflare Worker that processes images over HTTP. No SDK required — POST an image, receive a transformed image.
 
-**Base URL:** `https://api.imgcraft.dev`
+**Base URL:** `https://imgcraft-api.imgcraft.workers.dev`
 
 ## Endpoints
 
@@ -63,6 +63,7 @@ Each operation is an object with an `op` field plus operation-specific parameter
 | `brightness` | `brightness` |
 | `contrast` | `value` |
 | `saturation` | `saturation` |
+| `compress` | `format` (`jpeg`, `png`, `webp`, `avif`), `quality`, `effort` |
 | `removeBackground` | — |
 | `upscale` | `factor` (2 or 4) |
 | `smartCrop` | `subject` (`face`, `object`) |
@@ -71,7 +72,7 @@ Each operation is an object with an `op` field plus operation-specific parameter
 ### Example (curl)
 
 ```bash
-curl -X POST https://api.imgcraft.dev/transform \
+curl -X POST https://imgcraft-api.imgcraft.workers.dev/transform \
   -F "image=@photo.jpg" \
   -F 'ops=[{"op":"resize","options":{"width":800}},{"op":"format","options":{"format":"webp","quality":85}}]' \
   --output result.webp
@@ -87,7 +88,7 @@ form.append('ops', JSON.stringify([
   { op: 'format', options: { format: 'webp', quality: 85 } },
 ]))
 
-const res = await fetch('https://api.imgcraft.dev/transform', {
+const res = await fetch('https://imgcraft-api.imgcraft.workers.dev/transform', {
   method: 'POST',
   body: form,
 })
@@ -143,9 +144,19 @@ GET /health
 
 ## Rate limiting
 
-Requests are rate-limited by IP address. Default: **60 requests per minute**.
+Requests are rate-limited by IP address with three tiers:
 
-Exceeding the limit returns `HTTP 429` with a `Retry-After` header.
+| Tier | Limit | Window | Error code |
+|---|---|---|---|
+| Per-minute | 10 requests | 60 seconds | `RATE_LIMIT_EXCEEDED` |
+| Per-day | 50 requests | 24 hours | `RATE_LIMIT_DAY_EXCEEDED` |
+| AI ops per-day | 10 requests | 24 hours | `RATE_LIMIT_AI_EXCEEDED` |
+
+The AI tier applies only to requests containing `removeBackground`, `smartCrop`, or `upscale` operations.
+
+Other limits: 10 MB max image size, 30 second processing timeout.
+
+Exceeding any tier returns `HTTP 429` with a `Retry-After` header (seconds until the window resets).
 
 ---
 

@@ -4,13 +4,27 @@ import { CopyButton } from '../components/copy-button'
 
 const heroCode = `import { img } from 'imgcraft'
 
-const buffer = await img('photo.jpg')
+// Smart compression — auto WebP at 80% quality
+const small = await img('photo.jpg')
+  .compress({ quality: 80 })
+  .toBuffer()
+
+// Compress to a specific format
+const avif = await img('photo.jpg')
+  .compress({ format: 'avif', quality: 60 })
+  .toBuffer()
+
+// Resize then compress — chain any transforms
+const thumb = await img('photo.jpg')
   .resize(800)
-  .removeBackground()
-  .webp({ quality: 85 })
+  .compress({ format: 'webp', quality: 85 })
   .toBuffer()`
 
 const features = [
+  {
+    title: 'Compression',
+    desc: 'Smart compress to WebP, AVIF, JPEG. Pick quality and format in one call.',
+  },
   {
     title: 'Node + Browser',
     desc: 'One API, runs everywhere. Sharp for Node, WASM for browser.',
@@ -42,10 +56,6 @@ const features = [
   {
     title: 'Metadata',
     desc: 'Read width, height, format, EXIF. Strip metadata in one call.',
-  },
-  {
-    title: 'REST API',
-    desc: 'Hosted at imgcraft-api.imgcraft.workers.dev. POST an image, get transforms.',
   },
 ]
 

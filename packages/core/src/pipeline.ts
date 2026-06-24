@@ -28,6 +28,7 @@ import type {
   ContrastOptions,
   SmartCropOptions,
   UpscaleOptions,
+  CompressOptions,
 } from './types.js'
 
 export class Pipeline {
@@ -148,6 +149,10 @@ export class Pipeline {
 
   upscale(options: UpscaleOptions): this {
     return this.push({ op: 'upscale', options })
+  }
+
+  compress(options?: CompressOptions): this {
+    return this.push({ op: 'compress', options: options ?? {} })
   }
 
   async meta(): Promise<MetadataResult> {

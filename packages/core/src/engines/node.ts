@@ -6,12 +6,14 @@ import type {
   EngineResult,
   ImageInput,
   PipelineOp,
+  CompressOptions,
 } from '../types.js'
 import {
   applyRemoveBackground,
   applySmartCrop,
   applyUpscale,
 } from '../transforms/ai.js'
+import { applyCompress } from '../transforms/format.js'
 
 type SharpConstructor = Awaited<ReturnType<typeof importSharp>>
 type SharpInstance = ReturnType<SharpConstructor>
@@ -118,10 +120,11 @@ function applyOp(pipeline: SharpInstance, op: PipelineOp): SharpInstance {
 
     case 'format':
     case 'quality':
+    case 'compress':
     case 'removeBackground':
     case 'smartCrop':
     case 'upscale':
-      // AI ops and format/quality are handled in processNode before reaching here
+      // AI ops, format/quality/compress are handled in processNode before reaching here
       return pipeline
   }
 }
@@ -132,13 +135,19 @@ export async function processNode(state: PipelineState): Promise<EngineResult> {
   let pipeline = sharp(toSharpInput(state.input))
   let pendingFormat: string | undefined
   let pendingQuality: number | undefined
+  let pendingCompress: CompressOptions | undefined
 
   for (const op of state.ops) {
     if (op.op === 'format') {
       pendingFormat = op.options.format
-      if (op.options.quality !== undefined) pendingQuality = op.options.quality
+      pendingQuality = op.options.quality
+      pendingCompress = undefined
     } else if (op.op === 'quality') {
       pendingQuality = op.value
+    } else if (op.op === 'compress') {
+      pendingCompress = op.options ?? {}
+      pendingFormat = undefined
+      pendingQuality = undefined
     } else if (
       op.op === 'removeBackground' ||
       op.op === 'smartCrop' ||
@@ -163,7 +172,9 @@ export async function processNode(state: PipelineState): Promise<EngineResult> {
     }
   }
 
-  if (pendingFormat !== undefined) {
+  if (pendingCompress !== undefined) {
+    pipeline = applyCompress(pipeline, pendingCompress)
+  } else if (pendingFormat !== undefined) {
     pipeline = pipeline.toFormat(
       pendingFormat as keyof FormatEnum,
       pendingQuality !== undefined ? { quality: pendingQuality } : undefined,

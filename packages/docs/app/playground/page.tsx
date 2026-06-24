@@ -9,8 +9,7 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false 
 const DEFAULT_CODE = `import { img } from 'imgcraft'
 
 const result = await img(uploadedImage)
-  .resize(800)
-  .webp({ quality: 85 })
+  .compress({ quality: 80 })
   .toBuffer()`
 
 interface Op {
@@ -30,6 +29,21 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 
 function parseOps(code: string): Op[] {
   const ops: Op[] = []
+
+  const compressMatch = code.match(/\.compress\(\s*\{([^}]*)\}\s*\)/)
+  if (compressMatch != null) {
+    const inner = compressMatch[1] ?? ''
+    const cOpts: Record<string, unknown> = {}
+    const cQual = inner.match(/quality:\s*(\d+)/)
+    if (cQual != null) cOpts['quality'] = Number(cQual[1])
+    const cFmt = inner.match(/format:\s*['"](\w+)['"]/)
+    if (cFmt != null) cOpts['format'] = cFmt[1]
+    const cEffort = inner.match(/effort:\s*(\d+)/)
+    if (cEffort != null) cOpts['effort'] = Number(cEffort[1])
+    ops.push({ op: 'compress', options: cOpts })
+  } else if (code.includes('.compress(')) {
+    ops.push({ op: 'compress', options: {} })
+  }
 
   const resizeMatch = code.match(/\.resize\(\s*(\d+)(?:\s*,\s*(\d+))?\s*\)/)
   if (resizeMatch != null) {

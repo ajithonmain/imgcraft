@@ -16,6 +16,7 @@ import type {
   ContrastOptions,
   SmartCropOptions,
   UpscaleOptions,
+  CompressOptions,
 } from './types.js'
 
 export interface BatchOptions {
@@ -165,12 +166,17 @@ export class Batch {
     return this.push({ op: 'upscale', options })
   }
 
+  compress(options?: CompressOptions): this {
+    return this.push({ op: 'compress', options: options ?? {} })
+  }
+
   // --- Internal: format extension from ops (for default file naming) ---
 
   private _outputExt(): string {
     for (let i = this._ops.length - 1; i >= 0; i--) {
       const op = this._ops[i]
       if (op !== undefined && op.op === 'format') return op.options.format
+      if (op !== undefined && op.op === 'compress') return op.options?.format ?? 'webp'
     }
     return 'png'
   }

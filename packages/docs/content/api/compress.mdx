@@ -1,0 +1,94 @@
+# Compression
+
+<Badge variant="node">Node</Badge> <Badge variant="browser">Browser</Badge>
+
+Smart image compression in one call. Pick a target format and quality — imgcraft handles the encoding.
+
+## compress
+
+```typescript
+.compress(options?: CompressOptions): Pipeline
+```
+
+Compress the image to an optimised format. Defaults to WebP at quality 80 if no options are given. The output format is automatically applied at the end of the pipeline after all other transforms.
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `format` | `'jpeg' \| 'png' \| 'webp' \| 'avif'` | `'webp'` | Output format. |
+| `quality` | `number` | `80` | Quality 1–100. Applies to JPEG, PNG, WebP, AVIF. |
+| `effort` | `number` | format default | Compression effort. WebP: 0–6. AVIF: 0–9. Higher = smaller file, slower encode. |
+
+```typescript
+// Default — WebP at 80% quality
+await img('photo.jpg').compress().toBuffer()
+
+// Explicit quality
+await img('photo.jpg').compress({ quality: 85 }).toBuffer()
+
+// AVIF for maximum compression
+await img('photo.jpg').compress({ format: 'avif', quality: 60 }).toBuffer()
+
+// WebP with maximum effort (slowest encode, smallest file)
+await img('photo.jpg').compress({ format: 'webp', quality: 80, effort: 6 }).toBuffer()
+```
+
+---
+
+## Difference from .webp() / .format()
+
+`.compress()` is the high-level method — it chooses sensible defaults and makes the intent clear. The lower-level `.webp()`, `.avif()`, `.jpeg()`, and `.format()` methods offer more per-format options (MozJPEG, progressive, lossless, compressionLevel). Use those when you need fine-grained control; use `.compress()` for the common case.
+
+| Method | Use when |
+|---|---|
+| `.compress({ format: 'webp' })` | You want the common path with a readable API |
+| `.webp({ lossless: true })` | You need lossless WebP |
+| `.jpeg({ progressive: true, mozjpeg: true })` | You need progressive or MozJPEG |
+| `.avif({ effort: 9 })` | You're optimising static assets and can afford slow encoding |
+
+---
+
+## Browser (WASM)
+
+`.compress()` is fully supported in the browser WASM engine. The `effort` option is silently ignored (the WASM encoder doesn't expose effort control), but format and quality work as expected.
+
+---
+
+## Batch
+
+Works identically in batch pipelines:
+
+```typescript
+import { batch } from 'imgcraft'
+
+await batch(['a.jpg', 'b.jpg', 'c.jpg'])
+  .resize(1200)
+  .compress({ format: 'webp', quality: 85 })
+  .toDir('./output')
+```
+
+---
+
+## Examples
+
+```typescript
+// Thumbnail pipeline
+await img('hero.jpg')
+  .resize(800, 450, { fit: 'cover' })
+  .compress({ quality: 85 })
+  .toBuffer()
+
+// Maximum compression for static site
+await img('photo.jpg')
+  .compress({ format: 'avif', quality: 55, effort: 9 })
+  .toFile('photo.avif')
+
+// Browser — compress a user upload
+const result = await img(file)
+  .resize(1200)
+  .compress({ format: 'webp', quality: 80 })
+  .toDataURL()
+```
+
+<Callout type="info">
+  WebP at quality 80 is the recommended default for most web images. It typically achieves 25–35% smaller files than JPEG at equivalent visual quality with near-instant encode times.
+</Callout>

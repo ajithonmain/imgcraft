@@ -123,6 +123,16 @@ const opSchemas = z.discriminatedUnion('op', [
     op: z.literal('upscale'),
     options: z.object({ factor: z.union([z.literal(2), z.literal(4)]) }),
   }),
+  z.object({
+    op: z.literal('compress'),
+    options: z
+      .object({
+        quality: z.number().int().min(1).max(100).optional(),
+        format: z.enum(['jpeg', 'png', 'webp', 'avif']).optional(),
+        effort: z.number().int().min(0).max(9).optional(),
+      })
+      .optional(),
+  }),
 ])
 
 export const opsArraySchema = z.array(opSchemas).min(1)

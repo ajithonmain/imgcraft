@@ -104,6 +104,12 @@ export interface UpscaleOptions {
   factor: 2 | 4
 }
 
+export interface CompressOptions {
+  quality?: number
+  format?: 'jpeg' | 'png' | 'webp' | 'avif'
+  effort?: number
+}
+
 export interface MetadataResult {
   width?: number
   height?: number
@@ -145,6 +151,7 @@ export type PipelineOp =
   | { op: 'removeBackground' }
   | { op: 'smartCrop'; options: SmartCropOptions }
   | { op: 'upscale'; options: UpscaleOptions }
+  | { op: 'compress'; options?: CompressOptions }
 
 export interface PipelineState {
   input: ImageInput
