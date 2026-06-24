@@ -103,6 +103,9 @@ importers:
       imgcraft:
         specifier: workspace:*
         version: link:../core
+      sharp:
+        specifier: ^0.33.0
+        version: 0.33.5
       zod:
         specifier: ^4.4.3
         version: 4.4.3
