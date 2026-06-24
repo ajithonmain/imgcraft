@@ -14,15 +14,15 @@ Overlay another image on top of the current image.
 
 ## Options
 
-<ApiTable rows={[
-  { name: 'input', type: 'string | Buffer', description: 'Path to the overlay image or a Buffer.' },
-  { name: 'gravity', type: "Gravity", default: "'center'", description: "Position of the overlay: 'north', 'south', 'east', 'west', 'center', 'northeast', 'northwest', 'southeast', 'southwest'." },
-  { name: 'top', type: 'number', default: 'undefined', description: 'Vertical offset in pixels from top. Overrides gravity.' },
-  { name: 'left', type: 'number', default: 'undefined', description: 'Horizontal offset in pixels from left. Overrides gravity.' },
-  { name: 'blend', type: "BlendMode", default: "'over'", description: "Blend mode: 'over', 'multiply', 'screen', 'add', 'saturate', etc." },
-  { name: 'opacity', type: 'number', default: '1', description: 'Overlay opacity 0–1.' },
-  { name: 'tile', type: 'boolean', default: 'false', description: 'Tile the overlay across the entire image.' },
-]} />
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| input | `string \| Buffer` | — | Path to the overlay image or a Buffer. |
+| gravity | `Gravity` | `'center'` | Position: `'north'`, `'south'`, `'east'`, `'west'`, `'center'`, `'northeast'`, etc. |
+| top | `number` | — | Vertical offset in pixels from top. Overrides gravity. |
+| left | `number` | — | Horizontal offset in pixels from left. Overrides gravity. |
+| blend | `BlendMode` | `'over'` | Blend mode: `'over'`, `'multiply'`, `'screen'`, `'add'`, `'saturate'`, etc. |
+| opacity | `number` | `1` | Overlay opacity 0–1. |
+| tile | `boolean` | `false` | Tile the overlay across the entire image. |
 
 ## Watermark example
 

@@ -21,35 +21,35 @@ Or use the generic method:
 
 ## JPEG options
 
-<ApiTable rows={[
-  { name: 'quality', type: 'number', default: '80', description: 'Quality 1–100. Lower = smaller file.' },
-  { name: 'progressive', type: 'boolean', default: 'false', description: 'Enable progressive (interlaced) JPEG.' },
-  { name: 'mozjpeg', type: 'boolean', default: 'false', description: 'Use MozJPEG encoder for better compression.' },
-]} />
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| quality | `number` | `80` | Quality 1–100. Lower = smaller file. |
+| progressive | `boolean` | `false` | Enable progressive (interlaced) JPEG. |
+| mozjpeg | `boolean` | `false` | Use MozJPEG encoder for better compression. |
 
 ## PNG options
 
-<ApiTable rows={[
-  { name: 'quality', type: 'number', default: '100', description: 'Quality 1–100 (lossless if 100).' },
-  { name: 'compressionLevel', type: 'number', default: '6', description: 'zlib compression level 0–9.' },
-  { name: 'progressive', type: 'boolean', default: 'false', description: 'Enable interlaced PNG.' },
-]} />
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| quality | `number` | `100` | Quality 1–100 (lossless if 100). |
+| compressionLevel | `number` | `6` | zlib compression level 0–9. |
+| progressive | `boolean` | `false` | Enable interlaced PNG. |
 
 ## WebP options
 
-<ApiTable rows={[
-  { name: 'quality', type: 'number', default: '80', description: 'Quality 1–100.' },
-  { name: 'lossless', type: 'boolean', default: 'false', description: 'Enable lossless WebP.' },
-  { name: 'effort', type: 'number', default: '4', description: 'Compression effort 0–6. Higher = smaller, slower.' },
-]} />
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| quality | `number` | `80` | Quality 1–100. |
+| lossless | `boolean` | `false` | Enable lossless WebP. |
+| effort | `number` | `4` | Compression effort 0–6. Higher = smaller, slower. |
 
 ## AVIF options
 
-<ApiTable rows={[
-  { name: 'quality', type: 'number', default: '50', description: 'Quality 1–100.' },
-  { name: 'effort', type: 'number', default: '4', description: 'Compression effort 0–9.' },
-  { name: 'lossless', type: 'boolean', default: 'false', description: 'Enable lossless encoding.' },
-]} />
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| quality | `number` | `50` | Quality 1–100. |
+| effort | `number` | `4` | Compression effort 0–9. |
+| lossless | `boolean` | `false` | Enable lossless encoding. |
 
 ## Examples
 

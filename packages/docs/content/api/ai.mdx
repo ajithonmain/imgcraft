@@ -45,9 +45,9 @@ await img('photo.jpg')
 
 Content-aware cropping using COCO-SSD object detection. Identifies the primary subject and crops to keep it centred.
 
-<ApiTable rows={[
-  { name: 'subject', type: "'face' | 'object'", default: "'object'", description: "Hint for detection model. 'face' prioritises face regions, 'object' uses general object detection." },
-]} />
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| subject | `'face' \| 'object'` | `'object'` | Hint for detection model. `'face'` prioritises face regions. |
 
 ```typescript
 // Crop to 400x400 keeping the main subject
@@ -70,9 +70,9 @@ await img('portrait.jpg')
 
 AI upscaling using ESRGAN. Increases resolution while recovering detail that conventional bicubic interpolation loses.
 
-<ApiTable rows={[
-  { name: 'factor', type: '2 | 4', default: '2', description: 'Upscale multiplier. 2x doubles dimensions, 4x quadruples.' },
-]} />
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| factor | `2 \| 4` | `2` | Upscale multiplier. 2x doubles dimensions, 4x quadruples. |
 
 ```typescript
 // 2x upscale (default)

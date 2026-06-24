@@ -22,10 +22,10 @@ Process an image with a pipeline of operations.
 
 ### Fields
 
-<ApiTable rows={[
-  { name: 'image', type: 'File', description: 'The image to process. Required.' },
-  { name: 'ops', type: 'string (JSON)', description: 'Array of operation objects. See ops schema below.' },
-]} />
+| Field | Type | Description |
+|---|---|---|
+| image | `File` | The image to process. Required. |
+| ops | `string (JSON)` | Array of operation objects. See ops schema below. |
 
 ### Response
 
@@ -38,8 +38,8 @@ Each operation is an object with an `op` field plus operation-specific parameter
 
 ```json
 [
-  { "op": "resize", "width": 800, "height": 600, "fit": "cover" },
-  { "op": "format", "type": "webp", "quality": 85 },
+  { "op": "resize", "options": { "width": 800, "height": 600, "fit": "cover" } },
+  { "op": "format", "options": { "format": "webp", "quality": 85 } },
   { "op": "grayscale" },
   { "op": "removeBackground" }
 ]
@@ -47,22 +47,22 @@ Each operation is an object with an `op` field plus operation-specific parameter
 
 ### Supported operations
 
-| op | Parameters |
+| op | options |
 |---|---|
 | `resize` | `width`, `height`, `fit` |
-| `crop` | `top`, `left`, `width`, `height` |
+| `crop` | `left`, `top`, `width`, `height` |
 | `rotate` | `angle` |
 | `flip` | — |
 | `flop` | — |
-| `format` | `type` (`jpeg`, `png`, `webp`, `avif`), `quality` |
+| `format` | `format` (`jpeg`, `png`, `webp`, `avif`), `quality` |
 | `blur` | `sigma` |
 | `sharpen` | — |
 | `grayscale` | — |
-| `tint` | `color` |
+| `tint` | `r`, `g`, `b` |
 | `negate` | — |
-| `brightness` | `factor` |
-| `contrast` | `factor` |
-| `saturation` | `factor` |
+| `brightness` | `brightness` |
+| `contrast` | `value` |
+| `saturation` | `saturation` |
 | `removeBackground` | — |
 | `upscale` | `factor` (2 or 4) |
 | `smartCrop` | `subject` (`face`, `object`) |
@@ -73,7 +73,7 @@ Each operation is an object with an `op` field plus operation-specific parameter
 ```bash
 curl -X POST https://api.imgcraft.dev/transform \
   -F "image=@photo.jpg" \
-  -F 'ops=[{"op":"resize","width":800},{"op":"format","type":"webp","quality":85}]' \
+  -F 'ops=[{"op":"resize","options":{"width":800}},{"op":"format","options":{"format":"webp","quality":85}}]' \
   --output result.webp
 ```
 
@@ -83,8 +83,8 @@ curl -X POST https://api.imgcraft.dev/transform \
 const form = new FormData()
 form.append('image', file)
 form.append('ops', JSON.stringify([
-  { op: 'resize', width: 800 },
-  { op: 'webp', quality: 85 },
+  { op: 'resize', options: { width: 800 } },
+  { op: 'format', options: { format: 'webp', quality: 85 } },
 ]))
 
 const res = await fetch('https://api.imgcraft.dev/transform', {

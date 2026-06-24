@@ -7,33 +7,31 @@ interface CodeBlockProps {
   filename?: string
 }
 
+async function highlight(code: string, lang: string, theme: string): Promise<string> {
+  try {
+    return await codeToHtml(code, { lang, theme })
+  } catch {
+    return `<pre><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`
+  }
+}
+
 export async function CodeBlock({ code, lang = 'typescript', filename }: CodeBlockProps) {
   const [darkHtml, lightHtml] = await Promise.all([
-    codeToHtml(code, { lang, theme: 'github-dark' }),
-    codeToHtml(code, { lang, theme: 'github-light' }),
+    highlight(code, lang, 'github-dark'),
+    highlight(code, lang, 'github-light'),
   ])
 
   return (
     <div className="code-block-wrap">
-      {filename != null && (
-        <div className="code-block-header">
-          <span>{filename}</span>
-          <CopyButton text={code} />
-        </div>
-      )}
-      {filename == null && (
-        <div className="code-block-header" style={{ justifyContent: 'flex-end' }}>
-          <CopyButton text={code} />
-        </div>
-      )}
       <div
-        className="code-dark"
-        dangerouslySetInnerHTML={{ __html: darkHtml }}
-      />
-      <div
-        className="code-light"
-        dangerouslySetInnerHTML={{ __html: lightHtml }}
-      />
+        className="code-block-header"
+        style={filename == null ? { justifyContent: 'flex-end' } : undefined}
+      >
+        {filename != null && <span>{filename}</span>}
+        <CopyButton text={code} />
+      </div>
+      <div className="code-dark" dangerouslySetInnerHTML={{ __html: darkHtml }} />
+      <div className="code-light" dangerouslySetInnerHTML={{ __html: lightHtml }} />
     </div>
   )
 }

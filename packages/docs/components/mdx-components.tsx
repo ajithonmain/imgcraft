@@ -24,10 +24,14 @@ async function MdxPre({ children }: HTMLAttributes<HTMLPreElement>) {
       ? String(child.props.children ?? '').trim()
       : ''
 
-  const [darkHtml, lightHtml] = await Promise.all([
-    codeToHtml(code, { lang, theme: 'github-dark' }),
-    codeToHtml(code, { lang, theme: 'github-light' }),
-  ])
+  async function hi(theme: string) {
+    try {
+      return await codeToHtml(code, { lang, theme })
+    } catch {
+      return `<pre><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`
+    }
+  }
+  const [darkHtml, lightHtml] = await Promise.all([hi('github-dark'), hi('github-light')])
 
   return (
     <div className="code-block-wrap">

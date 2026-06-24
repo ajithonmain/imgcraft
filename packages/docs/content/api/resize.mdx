@@ -12,13 +12,13 @@ Scale images to a target size. Preserves aspect ratio by default.
 
 ## Options
 
-<ApiTable rows={[
-  { name: 'width', type: 'number', default: 'undefined', description: 'Target width in pixels.' },
-  { name: 'height', type: 'number', default: 'undefined', description: 'Target height in pixels.' },
-  { name: 'fit', type: "'cover' | 'contain' | 'fill' | 'inside' | 'outside'", default: "'cover'", description: 'How the image is fitted to the target dimensions.' },
-  { name: 'withoutEnlargement', type: 'boolean', default: 'false', description: 'Do not enlarge if the width or height are already less than the target.' },
-  { name: 'background', type: 'string', default: "'#000000'", description: 'Background color used with contain or fill.' },
-]} />
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| width | `number` | — | Target width in pixels. |
+| height | `number` | — | Target height in pixels. |
+| fit | `'cover' \| 'contain' \| 'fill' \| 'inside' \| 'outside'` | `'cover'` | How the image is fitted to the target dimensions. |
+| withoutEnlargement | `boolean` | `false` | Do not enlarge if the width or height are already less than the target. |
+| background | `string` | `'#000000'` | Background color used with contain or fill. |
 
 ## Fit modes
 

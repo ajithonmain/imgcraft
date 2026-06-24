@@ -25,12 +25,12 @@ Batch pipelines have a different final step — instead of `.toBuffer()`, use:
 
 ## toDir() options
 
-<ApiTable rows={[
-  { name: 'suffix', type: 'string', default: "''", description: 'Append a suffix to the output filename before the extension.' },
-  { name: 'prefix', type: 'string', default: "''", description: 'Prepend a prefix to the output filename.' },
-  { name: 'overwrite', type: 'boolean', default: 'true', description: 'Overwrite existing files.' },
-  { name: 'concurrency', type: 'number', default: 'os.cpus().length', description: 'Max images processed in parallel.' },
-]} />
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| suffix | `string` | `''` | Append a suffix to the output filename before the extension. |
+| prefix | `string` | `''` | Prepend a prefix to the output filename. |
+| overwrite | `boolean` | `true` | Overwrite existing files. |
+| concurrency | `number` | `os.cpus().length` | Max images processed in parallel. |
 
 ## Examples
 
@@ -72,12 +72,12 @@ const buffers = await batch(['a.jpg', 'b.jpg', 'c.jpg'])
 
 Each item in the returned array contains:
 
-<ApiTable rows={[
-  { name: 'input', type: 'string | Buffer', description: 'Original input reference.' },
-  { name: 'output', type: 'string', description: 'Output file path (toDir only).' },
-  { name: 'size', type: 'number', description: 'Output file size in bytes.' },
-  { name: 'timing', type: 'number', description: 'Processing time in ms.' },
-]} />
+| Field | Type | Description |
+|---|---|---|
+| input | `string \| Buffer` | Original input reference. |
+| output | `string` | Output file path (toDir only). |
+| size | `number` | Output file size in bytes. |
+| timing | `number` | Processing time in ms. |
 
 ## Concurrency
 
