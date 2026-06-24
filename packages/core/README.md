@@ -88,8 +88,14 @@ const blob = await res.blob()
 
 ## Supported operations
 
-**Compression**
-- `compress(options?)` — compress to WebP/AVIF/JPEG/PNG with quality control (default: WebP q80)
+**Compression & Format Conversion**
+- `compress(options?)` — compress to WebP/AVIF/JPEG/PNG (default: WebP q80)
+- `format(type)` — convert between jpeg, png, webp, avif
+- `jpeg(options?)` — JPEG with quality control
+- `png(options?)` — PNG with quality control
+- `webp(options?)` — WebP with quality control
+- `avif(options?)` — AVIF with quality control (best compression ratio)
+- `quality(1–100)` — set output quality
 
 **Transforms**
 - `resize(width?, height?, options?)` — fit modes: cover, contain, fill, inside, outside
@@ -110,14 +116,6 @@ const blob = await res.blob()
 - `blur(sigma?)` — Gaussian blur
 - `sharpen(options?)` — unsharp mask
 - `median(size?)` — median filter
-
-**Format & output**
-- `format(type)` — jpeg, png, webp, avif
-- `quality(1–100)` — output quality
-- `jpeg(options?)` — JPEG-specific options
-- `png(options?)` — PNG-specific options
-- `webp(options?)` — WebP-specific options
-- `avif(options?)` — AVIF-specific options
 
 **Compositing**
 - `composite(input, options?)` — overlay/watermark (base64 data URI input)
@@ -155,7 +153,9 @@ A hosted Cloudflare Worker proxies requests to the Node.js processing server. No
 | `GET` | `/info` | Read metadata without processing |
 | `GET` | `/health` | Status check |
 
-**Rate limits:** 10 req/min · 50 req/day · 10 AI ops/day (per IP)
+**Rate limits:** 10 requests/minute, 50 requests/day per IP. AI operations: 10/day.
+
+**Interactive API Reference:** https://imgcraft-api.imgcraft.workers.dev/docs
 
 ```sh
 curl -X POST https://imgcraft-api.imgcraft.workers.dev/transform \

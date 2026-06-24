@@ -57,6 +57,10 @@ const features = [
     title: 'Metadata',
     desc: 'Read width, height, format, EXIF. Strip metadata in one call.',
   },
+  {
+    title: 'REST API',
+    desc: 'Hosted at imgcraft-api.imgcraft.workers.dev — POST image, get result. Interactive docs at /docs.',
+  },
 ]
 
 export default async function HomePage() {
@@ -69,7 +73,7 @@ export default async function HomePage() {
           for the modern stack
         </h1>
         <p className="landing-subline">
-          Chainable transforms, AI ops, Node + Browser. The sharp alternative built for 2025.
+          Compress, convert, resize images. AI ops. Node + Browser. Zero config.
         </p>
         <div className="landing-ctas">
           <Link href="/docs/getting-started" className="btn-primary">
@@ -94,7 +98,7 @@ export default async function HomePage() {
       </div>
 
       <div className="stats-bar">
-        <span>65 tests passing</span>
+        <span>70 tests passing</span>
         <span className="stats-bar-divider" />
         <span>Node + Browser</span>
         <span className="stats-bar-divider" />

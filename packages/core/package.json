@@ -1,6 +1,6 @@
 {
   "name": "imgcraft",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "Chainable image transform pipeline — Node + Browser WASM",
   "license": "MIT",
   "repository": {
@@ -9,6 +9,17 @@
   },
   "homepage": "https://imgcraft-docs.vercel.app",
   "keywords": [
+    "image-compress",
+    "image-converter",
+    "convert-image",
+    "compress-image",
+    "jpg-to-webp",
+    "png-to-webp",
+    "image-to-webp",
+    "webp-converter",
+    "avif-converter",
+    "jpeg-compress",
+    "bulk-image-compress",
     "image",
     "image-processing",
     "image-resize",
