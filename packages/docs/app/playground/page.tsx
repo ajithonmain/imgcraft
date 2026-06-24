@@ -286,7 +286,7 @@ export default function PlaygroundPage() {
 
       const res = await fetch(`${apiUrl}/transform`, { method: 'POST', body: form })
       if (!res.ok) {
-        if (res.status === 503 || res.status === 504) {
+        if (res.status === 502 || res.status === 503 || res.status === 504) {
           throw new Error(
             'Server warming up — Render free tier cold starts in ~30s. Try again.',
           )
