@@ -1,8 +1,27 @@
 {
   "name": "imgcraft",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Chainable image transform pipeline — Node + Browser WASM",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ajithonmain/imgcraft.git"
+  },
+  "homepage": "https://imgcraft.dev",
+  "keywords": [
+    "image",
+    "image-processing",
+    "sharp",
+    "wasm",
+    "resize",
+    "webp",
+    "avif",
+    "pipeline",
+    "background-removal",
+    "ai",
+    "browser",
+    "node"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
