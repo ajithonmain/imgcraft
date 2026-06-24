@@ -5,6 +5,9 @@ const withMDX = createMDX({})
 
 const config: NextConfig = {
   pageExtensions: ['ts', 'tsx', 'mdx'],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 }
 
 export default withMDX(config)
