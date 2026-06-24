@@ -1,14 +1,15 @@
-name: Deploy API to Cloudflare Workers
+name: CI
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'packages/api/**'
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  deploy:
+  typecheck-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,9 +25,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Deploy
-        working-directory: packages/api
-        run: npx wrangler deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - run: pnpm --filter imgcraft exec tsc --noEmit
+
+      - run: pnpm --filter imgcraft test run

@@ -25,10 +25,12 @@ jobs:
 
       - run: pnpm --filter imgcraft typecheck
 
-      - run: pnpm --filter imgcraft test
+      - run: pnpm --filter imgcraft test run
 
       - run: pnpm --filter imgcraft build
 
-      - run: pnpm --filter imgcraft publish --no-git-checks
+      - name: Publish
+        working-directory: packages/core
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
