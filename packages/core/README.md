@@ -1,5 +1,9 @@
 # imgcraft
 
+<p align="center">
+  <img src="https://imgcraft-docs.vercel.app/logo.png" height="80" alt="imgcraft" />
+</p>
+
 Chainable image transforms for Node + Browser.
 
 [![npm version](https://img.shields.io/npm/v/imgcraft.svg)](https://www.npmjs.com/package/imgcraft)

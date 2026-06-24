@@ -9,7 +9,10 @@ export const metadata: Metadata = {
   title: 'imgcraft — Image processing for the modern stack',
   description:
     'Chainable image transforms, AI ops, Node + Browser WASM. The sharp alternative built for 2025.',
-  icons: { icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }] },
+  icons: {
+    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+    apple: '/logo.png',
+  },
   openGraph: {
     title: 'imgcraft — Image processing for the modern stack',
     description: 'Chainable transforms, AI ops, Node + Browser WASM.',

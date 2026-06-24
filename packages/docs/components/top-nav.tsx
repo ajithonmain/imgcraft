@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Github } from 'lucide-react'
 import { ThemeToggle } from './theme-toggle'
 
@@ -6,8 +7,8 @@ export function TopNav() {
   return (
     <nav className="top-nav">
       <Link href="/" className="top-nav-logo">
-        <span className="top-nav-logo-dot" />
-        imgcraft
+        <Image src="/logo.png" height={28} width={28} alt="imgcraft" />
+        <span>imgcraft</span>
       </Link>
       <div className="top-nav-links">
         <Link href="/docs/getting-started" className="top-nav-link">
