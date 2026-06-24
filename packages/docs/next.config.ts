@@ -8,6 +8,9 @@ const config: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  outputFileTracingIncludes: {
+    '/docs/(.*)': ['./content/**/*'],
+  },
 }
 
 export default withMDX(config)

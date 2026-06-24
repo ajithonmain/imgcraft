@@ -15,7 +15,17 @@ const result = await img(uploadedImage)
 
 interface Op {
   op: string
+  options?: Record<string, unknown>
   [key: string]: unknown
+}
+
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  const h = hex.replace('#', '')
+  return {
+    r: parseInt(h.slice(0, 2), 16) || 0,
+    g: parseInt(h.slice(2, 4), 16) || 0,
+    b: parseInt(h.slice(4, 6), 16) || 0,
+  }
 }
 
 function parseOps(code: string): Op[] {
@@ -23,16 +33,16 @@ function parseOps(code: string): Op[] {
 
   const resizeMatch = code.match(/\.resize\(\s*(\d+)(?:\s*,\s*(\d+))?\s*\)/)
   if (resizeMatch != null) {
-    const o: Op = { op: 'resize', width: Number(resizeMatch[1]) }
-    if (resizeMatch[2] != null) o['height'] = Number(resizeMatch[2])
-    ops.push(o)
+    const options: Record<string, unknown> = { width: Number(resizeMatch[1]) }
+    if (resizeMatch[2] != null) options['height'] = Number(resizeMatch[2])
+    ops.push({ op: 'resize', options })
   }
 
   const rotateMatch = code.match(/\.rotate\(\s*(\d+)\s*\)/)
   if (rotateMatch != null) {
-    ops.push({ op: 'rotate', angle: Number(rotateMatch[1]) })
+    ops.push({ op: 'rotate', options: { angle: Number(rotateMatch[1]) } })
   } else if (code.includes('.rotate(')) {
-    ops.push({ op: 'rotate', angle: 90 })
+    ops.push({ op: 'rotate', options: { angle: 90 } })
   }
 
   if (code.includes('.flip(')) ops.push({ op: 'flip' })
@@ -42,63 +52,67 @@ function parseOps(code: string): Op[] {
   let formatPushed = false
   for (const fmt of formats) {
     const qualMatch = code.match(
-      new RegExp(`\\.${fmt}\\(\\s*\\{[^}]*quality:\\s*(\\d+)[^}]*\\}\\s*\\)`),
+      new RegExp(`\\.${fmt}\\(\\s*\\{[^}]*quality:\\s*(\\d+)[^}]*\\}\\s*\\)`) as RegExp,
     )
     if (qualMatch != null) {
-      ops.push({ op: 'format', type: fmt, quality: Number(qualMatch[1]) })
+      ops.push({ op: 'format', options: { format: fmt, quality: Number(qualMatch[1]) } })
       formatPushed = true
       break
     }
     if (code.includes(`.${fmt}(`)) {
-      ops.push({ op: 'format', type: fmt })
+      ops.push({ op: 'format', options: { format: fmt } })
       formatPushed = true
       break
     }
   }
   if (!formatPushed && code.includes('.format(')) {
     const fmtMatch = code.match(/\.format\(\s*['"](\w+)['"]\s*\)/)
-    if (fmtMatch != null) ops.push({ op: 'format', type: fmtMatch[1] })
+    if (fmtMatch != null) ops.push({ op: 'format', options: { format: fmtMatch[1] } })
   }
 
   const blurMatch = code.match(/\.blur\(\s*([\d.]+)\s*\)/)
   if (blurMatch != null) {
-    ops.push({ op: 'blur', sigma: Number(blurMatch[1]) })
+    ops.push({ op: 'blur', options: { sigma: Number(blurMatch[1]) } })
   } else if (code.includes('.blur(')) {
-    ops.push({ op: 'blur' })
+    ops.push({ op: 'blur', options: {} })
   }
 
-  if (code.includes('.sharpen(')) ops.push({ op: 'sharpen' })
+  if (code.includes('.sharpen(')) ops.push({ op: 'sharpen', options: {} })
   if (code.includes('.grayscale(')) ops.push({ op: 'grayscale' })
   if (code.includes('.negate(')) ops.push({ op: 'negate' })
 
   const tintMatch = code.match(/\.tint\(\s*['"]([^'"]+)['"]\s*\)/)
-  if (tintMatch != null) ops.push({ op: 'tint', color: tintMatch[1] })
+  if (tintMatch != null && tintMatch[1] != null) ops.push({ op: 'tint', options: hexToRgb(tintMatch[1]) })
 
   const brightnessMatch = code.match(/\.brightness\(\s*([\d.]+)\s*\)/)
-  if (brightnessMatch != null) ops.push({ op: 'brightness', factor: Number(brightnessMatch[1]) })
+  if (brightnessMatch != null)
+    ops.push({ op: 'brightness', options: { brightness: Number(brightnessMatch[1]) } })
 
   const contrastMatch = code.match(/\.contrast\(\s*([\d.]+)\s*\)/)
-  if (contrastMatch != null) ops.push({ op: 'contrast', factor: Number(contrastMatch[1]) })
+  if (contrastMatch != null)
+    ops.push({ op: 'contrast', options: { value: Number(contrastMatch[1]) } })
 
   const saturationMatch = code.match(/\.saturation\(\s*([\d.]+)\s*\)/)
   if (saturationMatch != null)
-    ops.push({ op: 'saturation', factor: Number(saturationMatch[1]) })
+    ops.push({ op: 'saturation', options: { saturation: Number(saturationMatch[1]) } })
 
   if (code.includes('.removeBackground(')) ops.push({ op: 'removeBackground' })
 
   const upscaleMatch = code.match(/\.upscale\(\s*(\d+)\s*\)/)
   if (upscaleMatch != null) {
-    ops.push({ op: 'upscale', factor: Number(upscaleMatch[1]) })
+    ops.push({ op: 'upscale', options: { factor: Number(upscaleMatch[1]) as 2 | 4 } })
   } else if (code.includes('.upscale(')) {
-    ops.push({ op: 'upscale', factor: 2 })
+    ops.push({ op: 'upscale', options: { factor: 2 } })
   }
 
   const smartCropMatch = code.match(/\.smartCrop\(\s*['"]([^'"]+)['"]\s*\)/)
   if (smartCropMatch != null) {
-    ops.push({ op: 'smartCrop', subject: smartCropMatch[1] })
+    ops.push({ op: 'smartCrop', options: { subject: smartCropMatch[1] } })
   } else if (code.includes('.smartCrop(')) {
-    ops.push({ op: 'smartCrop' })
+    ops.push({ op: 'smartCrop', options: {} })
   }
+
+  if (code.includes('.stripMeta(')) ops.push({ op: 'stripMeta' })
 
   return ops
 }
@@ -158,18 +172,18 @@ export default function PlaygroundPage() {
       if (resultUrl != null) URL.revokeObjectURL(resultUrl)
       const url = URL.createObjectURL(blob)
 
-      const img = new Image()
-      img.onload = () => {
+      const imgEl = new Image()
+      imgEl.onload = () => {
         setMeta({
-          width: img.naturalWidth,
-          height: img.naturalHeight,
+          width: imgEl.naturalWidth,
+          height: imgEl.naturalHeight,
           format: blob.type.replace('image/', ''),
           sizeBefore: imageFile.size,
           sizeAfter: blob.size,
           timing,
         })
       }
-      img.src = url
+      imgEl.src = url
 
       resultBlobRef.current = blob
       setResultUrl(url)
