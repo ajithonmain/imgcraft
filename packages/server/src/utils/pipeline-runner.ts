@@ -11,10 +11,14 @@ export async function runPipeline(input: Uint8Array, ops: PipelineOp[]): Promise
   const data = await pipeline.toBuffer()
   const bytes = data instanceof Uint8Array ? data : new Uint8Array(data)
 
-  const formatOp = [...ops]
-    .reverse()
-    .find((o): o is Extract<PipelineOp, { op: 'format' }> => o.op === 'format')
-  const format = formatOp?.options.format ?? 'jpeg'
+  const reversed = [...ops].reverse()
+  const compressOp = reversed.find(
+    (o): o is Extract<PipelineOp, { op: 'compress' }> => o.op === 'compress',
+  )
+  const formatOp = reversed.find(
+    (o): o is Extract<PipelineOp, { op: 'format' }> => o.op === 'format',
+  )
+  const format = compressOp?.options?.format ?? formatOp?.options.format ?? 'jpeg'
 
   return { buffer: bytes, format }
 }
