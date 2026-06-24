@@ -1,12 +1,18 @@
-import { redirect } from 'next/navigation'
+import { redirect, notFound } from 'next/navigation'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import Link from 'next/link'
 import { getContent } from '../../../lib/content'
-import { getAdjacentPages } from '../../../lib/nav'
+import { allNavItems, getAdjacentPages } from '../../../lib/nav'
 import { mdxComponents } from '../../../components/mdx-components'
 
 interface Props {
   params: Promise<{ slug?: string[] }>
+}
+
+export async function generateStaticParams() {
+  return allNavItems.map((item) => ({
+    slug: item.href.replace('/docs/', '').split('/'),
+  }))
 }
 
 export default async function DocsPage({ params }: Props) {
@@ -21,12 +27,7 @@ export default async function DocsPage({ params }: Props) {
     const result = getContent(slug)
     source = result.source
   } catch {
-    return (
-      <article className="docs-content">
-        <h1>Not found</h1>
-        <p>This page does not exist yet.</p>
-      </article>
-    )
+    notFound()
   }
 
   const href = `/docs/${slug.join('/')}`
