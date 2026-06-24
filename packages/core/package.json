@@ -1,6 +1,6 @@
 {
   "name": "imgcraft",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Chainable image transform pipeline — Node + Browser WASM",
   "license": "MIT",
   "repository": {

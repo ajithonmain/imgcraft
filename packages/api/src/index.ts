@@ -21,7 +21,8 @@ const app = new Hono<{ Bindings: Env }>()
 
 app.use('*', cors)
 
-// /docs routes bypass rate limiting
+// Root and /docs routes bypass rate limiting
+app.get('/', (c) => c.redirect('/docs', 301))
 app.get('/docs', () => handleDocs())
 app.get('/docs/openapi.json', () => handleOpenAPIJson(spec))
 

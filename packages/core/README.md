@@ -13,7 +13,7 @@
 
 Chainable image processing for Node.js and the browser — with AI ops built in.
 
-imgcraft converts, compresses, resizes, crops, removes backgrounds, upscales images and more — via a fluent chainable API. Runs natively in Node.js using sharp, and in the browser via WebAssembly. A hosted REST API is also available at `https://imgcraft-api.imgcraft.workers.dev`.
+imgcraft converts, compresses, resizes, crops, removes backgrounds, upscales images and more — via a fluent chainable API. Runs natively in Node.js using sharp, and in the browser via WebAssembly. A hosted REST API is also available at `https://imgcraft-api.imgcraft.workers.dev/docs`.
 
 ## Installation
 
@@ -152,6 +152,8 @@ A hosted Cloudflare Worker proxies requests to the Node.js processing server. No
 | `POST` | `/transform` | Process an image, returns transformed bytes |
 | `GET` | `/info` | Read metadata without processing |
 | `GET` | `/health` | Status check |
+
+**[Try it live →](https://imgcraft-api.imgcraft.workers.dev/docs)**
 
 **Rate limits:** 10 requests/minute, 50 requests/day per IP. AI operations: 10/day.
 
