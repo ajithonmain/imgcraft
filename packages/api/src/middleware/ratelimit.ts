@@ -4,10 +4,13 @@ import type { Env } from '../index.js'
 const WINDOW_SECONDS = 60
 
 export const rateLimit: MiddlewareHandler<{ Bindings: Env }> = async (c, next) => {
-  const ip =
-    c.req.header('CF-Connecting-IP') ??
-    c.req.header('X-Forwarded-For') ??
-    'unknown'
+  // CF-Connecting-IP is set by Cloudflare and cannot be spoofed in production.
+  // X-Forwarded-For is user-controlled — treat as dev-only fallback, never trusted in prod.
+  const ip = c.req.header('CF-Connecting-IP') ?? c.req.header('X-Forwarded-For')
+
+  if (!ip) {
+    return c.json({ error: 'Unable to determine client IP', code: 'MISSING_IP' }, 400)
+  }
 
   const limit = parseInt(c.env.RATE_LIMIT_RPM ?? '60', 10)
   const key = `rl:${ip}`

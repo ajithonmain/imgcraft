@@ -100,7 +100,10 @@ const opSchemas = z.discriminatedUnion('op', [
   z.object({
     op: z.literal('composite'),
     options: z.object({
-      input: z.string(),
+      input: z.string().regex(
+        /^data:image\/[a-z+]+;base64,[A-Za-z0-9+/=]+$/,
+        'composite.input must be a base64 data URI',
+      ),
       blend: blendModeSchema.optional(),
       top: z.number().int().optional(),
       left: z.number().int().optional(),

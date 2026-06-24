@@ -74,7 +74,7 @@ transform.post('/', async (c) => {
     if (caught instanceof ImgCraftError) {
       return c.json({ error: caught.message, code: caught.code }, 422)
     }
-    const message = caught instanceof Error ? caught.message : String(caught)
-    return c.json({ error: message, code: 'PROCESSING_ERROR' }, 500)
+    console.error('[imgcraft/server] processing error:', caught)
+    return c.json({ error: 'Processing failed', code: 'PROCESSING_ERROR' }, 500)
   }
 })
